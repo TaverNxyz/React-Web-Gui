@@ -2,7 +2,7 @@
 import React from "react";
 import { useInterop } from "@/contexts/InteropContext";
 import { Badge } from "@/components/ui/badge";
-import { Signal, SignalOff } from "lucide-react";
+import { Signal, WifiOff } from "lucide-react";
 
 const ConnectionStatus: React.FC = () => {
   const { isConnected } = useInterop();
@@ -20,7 +20,7 @@ const ConnectionStatus: React.FC = () => {
           </>
         ) : (
           <>
-            <SignalOff className="w-3 h-3 mr-1" />
+            <WifiOff className="w-3 h-3 mr-1" />
             Disconnected
           </>
         )}
