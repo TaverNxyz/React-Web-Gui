@@ -3,7 +3,7 @@
  * Connection handling for .NET integration
  */
 
-import { InteropMessage, WindowWithHostObjects } from './types';
+import type { InteropMessage, WindowWithHostObjects } from './types';
 
 export class ConnectionHandler {
   private isConnected: boolean = false;

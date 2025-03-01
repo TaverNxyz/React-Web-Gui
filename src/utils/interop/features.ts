@@ -3,7 +3,7 @@
  * Feature-specific interop methods
  */
 
-import { SettingsCategory, RadarEntity } from './types';
+import type { SettingsCategory, RadarEntity } from './types';
 import messagingService from './messagingService';
 
 export class FeatureService {

@@ -3,7 +3,7 @@
  * Handles communication between the React UI and .NET application
  */
 
-import { InteropMessage, InteropMessageType, WindowWithHostObjects } from './types';
+import type { InteropMessage, InteropMessageType, WindowWithHostObjects } from './types';
 
 export class MessagingService {
   private messageHandlers: Map<InteropMessageType, ((message: InteropMessage) => void)[]> = new Map();

@@ -4,14 +4,15 @@
  * This maintains backward compatibility
  */
 
-import InteropService, { 
+import InteropService from './interop';
+import type { 
   InteropMessage, 
   InteropMessageType, 
   SettingsCategory, 
   RadarEntity 
-} from './interop';
+} from './interop/types';
 
-export { 
+export type { 
   InteropMessage, 
   InteropMessageType, 
   SettingsCategory, 

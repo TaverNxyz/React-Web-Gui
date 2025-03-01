@@ -7,7 +7,7 @@
 import connectionHandler from './connection';
 import messagingService from './messagingService';
 import featureService from './features';
-import { InteropMessage, InteropMessageType, SettingsCategory, RadarEntity } from './types';
+import type { InteropMessage, InteropMessageType, SettingsCategory, RadarEntity } from './types';
 
 class InteropService {
   private static instance: InteropService;
@@ -163,5 +163,5 @@ class InteropService {
   }
 }
 
-export { InteropMessage, InteropMessageType, SettingsCategory, RadarEntity };
+export type { InteropMessage, InteropMessageType, SettingsCategory, RadarEntity };
 export default InteropService.getInstance();
