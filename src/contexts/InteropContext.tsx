@@ -1,6 +1,6 @@
 
 import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import interopService, { InteropMessage } from '../utils/interopService';
+import interopService, { InteropMessage, RadarEntity } from '../utils/interopService';
 import { useToast } from '@/hooks/use-toast';
 
 interface InteropContextType {
@@ -8,12 +8,16 @@ interface InteropContextType {
   sendMessage: (type: string, payload: any) => void;
   updateSettings: (category: string, settings: any) => void;
   toggleFeature: (feature: string, enabled: boolean) => void;
+  radarEntities: RadarEntity[];
+  forceConnect: () => void;
+  forceDisconnect: () => void;
 }
 
 const InteropContext = createContext<InteropContextType | undefined>(undefined);
 
 export const InteropProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [isConnected, setIsConnected] = useState(false);
+  const [radarEntities, setRadarEntities] = useState<RadarEntity[]>([]);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -44,28 +48,55 @@ export const InteropProvider: React.FC<{ children: ReactNode }> = ({ children })
         });
       }
     };
+    
+    const handleEntityUpdate = (message: InteropMessage) => {
+      if (message.payload?.entities) {
+        setRadarEntities(message.payload.entities);
+      }
+    };
 
     // Register event handlers
     interopService.on('CONNECT', handleConnect);
     interopService.on('DISCONNECT', handleDisconnect);
     interopService.on('SYSTEM_STATUS', handleStatus);
+    interopService.on('ENTITY_UPDATE', handleEntityUpdate);
 
     // Try to check connection on mount
-    setIsConnected(interopService.isHostConnected());
+    const initialConnectionStatus = interopService.isHostConnected();
+    setIsConnected(initialConnectionStatus);
+    
+    // If there's a connection, send a heartbeat
+    if (initialConnectionStatus) {
+      interopService.sendMessage('HEARTBEAT', { timestamp: Date.now() });
+    }
 
     // Clean up event handlers on unmount
     return () => {
       interopService.off('CONNECT', handleConnect);
       interopService.off('DISCONNECT', handleDisconnect);
       interopService.off('SYSTEM_STATUS', handleStatus);
+      interopService.off('ENTITY_UPDATE', handleEntityUpdate);
     };
   }, [toast]);
+
+  const forceConnect = () => {
+    interopService.forceConnectionStatus(true);
+    setIsConnected(true);
+  };
+  
+  const forceDisconnect = () => {
+    interopService.forceConnectionStatus(false);
+    setIsConnected(false);
+  };
 
   const value = {
     isConnected,
     sendMessage: interopService.sendMessage.bind(interopService),
     updateSettings: interopService.updateSettings.bind(interopService),
     toggleFeature: interopService.toggleFeature.bind(interopService),
+    radarEntities,
+    forceConnect,
+    forceDisconnect
   };
 
   return (

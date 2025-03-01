@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -11,6 +11,8 @@ import { RadarDisplay } from "@/components/radar/RadarDisplay";
 import { StatusBar } from "@/components/radar/StatusBar";
 import { ControlPanel } from "@/components/radar/ControlPanel";
 import { MiniMap } from "@/components/radar/MiniMap";
+import { useInterop } from "@/contexts/InteropContext";
+import { RadarEntity } from "@/utils/interopService";
 
 const Radar: React.FC = () => {
   const [isActive, setIsActive] = useState(false);
@@ -18,16 +20,21 @@ const Radar: React.FC = () => {
   const [zoomLevel, setZoomLevel] = useState(1);
   const [activeTab, setActiveTab] = useState("radar");
   const [statusMessage, setStatusMessage] = useState("Initializing system...");
-  const [entities, setEntities] = useState<any[]>([]);
+  const { isConnected, radarEntities = [], sendMessage, forceConnect } = useInterop();
+  const [simulationMode, setSimulationMode] = useState(false);
+  const [simulatedEntities, setSimulatedEntities] = useState<RadarEntity[]>([]);
 
-  // Simulate radar activity
+  // Use either real entities from the .NET host or simulated ones
+  const entities = radarEntities.length > 0 ? radarEntities : simulatedEntities;
+
+  // Simulate radar activity when in simulation mode
   useEffect(() => {
-    if (isActive) {
-      setStatusMessage("System active - scanning...");
+    if (isActive && simulationMode) {
+      setStatusMessage("System active - SIMULATION MODE");
       
       // Simulate entities appearing on radar
       const interval = setInterval(() => {
-        const newEntity = {
+        const newEntity: RadarEntity = {
           id: Math.random().toString(36).substring(7),
           x: Math.random() * 200 - 100,
           y: Math.random() * 200 - 100,
@@ -36,19 +43,48 @@ const Radar: React.FC = () => {
           heading: Math.random() * 360,
         };
         
-        setEntities(prev => [...prev.slice(-15), newEntity]);
+        setSimulatedEntities(prev => [...prev.slice(-15), newEntity]);
       }, 2000);
       
       return () => clearInterval(interval);
+    } else if (isActive && !simulationMode) {
+      setStatusMessage("System active - scanning for .NET data stream");
+      
+      // Real mode - here we'd wait for data from the .NET application
+      // The radarEntities from useInterop will be populated when the .NET app
+      // sends ENTITY_UPDATE messages
     } else {
       setStatusMessage("System in standby mode");
-      setEntities([]);
+      setSimulatedEntities([]);
     }
-  }, [isActive, range]);
+  }, [isActive, range, simulationMode]);
 
   // Handle system activation
   const toggleSystem = () => {
-    setIsActive(!isActive);
+    const newActiveState = !isActive;
+    setIsActive(newActiveState);
+    
+    // Notify the .NET host about the radar system state
+    sendMessage('FEATURE_TOGGLE', {
+      feature: 'radar',
+      enabled: newActiveState
+    });
+    
+    // If no connection to .NET, switch to simulation mode
+    if (!isConnected && newActiveState) {
+      setSimulationMode(true);
+    }
+  };
+
+  // Toggle between real and simulation mode
+  const toggleSimulationMode = () => {
+    setSimulationMode(!simulationMode);
+  };
+
+  // Force connection to .NET for development/testing
+  const handleForceConnect = () => {
+    forceConnect();
+    setSimulationMode(false);
   };
 
   return (
@@ -61,6 +97,9 @@ const Radar: React.FC = () => {
           <Badge variant="outline" className={`${isActive ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}>
             {isActive ? 'ACTIVE' : 'STANDBY'}
           </Badge>
+          {simulationMode && (
+            <Badge variant="outline" className="bg-amber-500/20 text-amber-400">SIMULATION</Badge>
+          )}
         </div>
         <div className="flex items-center gap-2">
           <Link to="/">
@@ -69,6 +108,30 @@ const Radar: React.FC = () => {
               Back to Settings
             </Button>
           </Link>
+          
+          {!isConnected && !simulationMode && (
+            <Button 
+              variant="secondary" 
+              size="sm"
+              onClick={handleForceConnect}
+              className="border-cyan-800/20 hover:bg-cyan-900/20 mr-2"
+            >
+              <Signal className="mr-2 h-4 w-4" />
+              Force Connect
+            </Button>
+          )}
+          
+          {!isConnected && (
+            <Button 
+              variant="secondary" 
+              size="sm"
+              onClick={toggleSimulationMode}
+              className="border-cyan-800/20 hover:bg-cyan-900/20 mr-2"
+            >
+              {simulationMode ? "Exit Simulation" : "Simulation Mode"}
+            </Button>
+          )}
+          
           <Button 
             variant={isActive ? "destructive" : "default"}
             onClick={toggleSystem}
@@ -97,7 +160,9 @@ const Radar: React.FC = () => {
                   </TabsTrigger>
                 </TabsList>
                 <div className="text-sm text-cyan-400/60 animate-pulse">
-                  {isActive ? 'Live data feed' : 'Feed inactive'}
+                  {isActive ? (
+                    isConnected ? 'Connected to .NET host' : 'Simulation mode active'
+                  ) : 'Feed inactive'}
                 </div>
               </div>
               
@@ -118,7 +183,8 @@ const Radar: React.FC = () => {
           
           <StatusBar 
             message={statusMessage} 
-            isActive={isActive} 
+            isActive={isActive}
+            isConnected={isConnected}
             entities={entities} 
           />
         </div>
