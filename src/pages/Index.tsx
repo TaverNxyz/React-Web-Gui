@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -145,48 +144,48 @@ const Index = () => {
   };
 
   return (
-    <div className="container mx-auto py-6 px-4 max-w-7xl">
+    <div className="container mx-auto py-6 px-4 max-w-7xl bg-background text-foreground">
       <header className="flex justify-between items-center mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-primary">Radar Control Panel</h1>
-          <p className="text-muted-foreground">Configure your radar and game enhancement settings</p>
+          <h1 className="text-3xl font-bold text-cyan-400">Radar Control Panel</h1>
+          <p className="text-cyan-300/80">Configure your radar and game enhancement settings</p>
         </div>
-        <Button onClick={handleSave} className="flex items-center gap-2">
+        <Button onClick={handleSave} className="flex items-center gap-2 bg-cyan-500 hover:bg-cyan-400 text-black">
           <Save size={16} /> Save Configuration
         </Button>
       </header>
 
       <Tabs defaultValue="general" className="space-y-4">
-        <TabsList className="grid grid-cols-7 w-full">
-          <TabsTrigger value="general" className="flex items-center gap-2">
+        <TabsList className="grid grid-cols-7 w-full bg-secondary text-secondary-foreground">
+          <TabsTrigger value="general" className="flex items-center gap-2 data-[state=active]:bg-cyan-500 data-[state=active]:text-black">
             <Settings size={16} /> General
           </TabsTrigger>
-          <TabsTrigger value="loot" className="flex items-center gap-2">
+          <TabsTrigger value="loot" className="flex items-center gap-2 data-[state=active]:bg-cyan-500 data-[state=active]:text-black">
             <Package size={16} /> Loot
           </TabsTrigger>
-          <TabsTrigger value="quest" className="flex items-center gap-2">
+          <TabsTrigger value="quest" className="flex items-center gap-2 data-[state=active]:bg-cyan-500 data-[state=active]:text-black">
             <HelpCircle size={16} /> Quest Helper
           </TabsTrigger>
-          <TabsTrigger value="server" className="flex items-center gap-2">
+          <TabsTrigger value="server" className="flex items-center gap-2 data-[state=active]:bg-cyan-500 data-[state=active]:text-black">
             <Wifi size={16} /> Web Server
           </TabsTrigger>
-          <TabsTrigger value="memory" className="flex items-center gap-2">
+          <TabsTrigger value="memory" className="flex items-center gap-2 data-[state=active]:bg-cyan-500 data-[state=active]:text-black">
             <Cpu size={16} /> Memory Features
           </TabsTrigger>
-          <TabsTrigger value="aimbot" className="flex items-center gap-2">
+          <TabsTrigger value="aimbot" className="flex items-center gap-2 data-[state=active]:bg-cyan-500 data-[state=active]:text-black">
             <Eye size={16} /> Aimbot
           </TabsTrigger>
-          <TabsTrigger value="monitor" className="flex items-center gap-2">
+          <TabsTrigger value="monitor" className="flex items-center gap-2 data-[state=active]:bg-cyan-500 data-[state=active]:text-black">
             <Monitor size={16} /> Monitor
           </TabsTrigger>
         </TabsList>
 
         {/* General Settings Tab */}
         <TabsContent value="general" className="space-y-4">
-          <Card>
+          <Card className="border-cyan-900/30 bg-[#1a1a1f]">
             <CardHeader>
-              <CardTitle>Radar/General Settings</CardTitle>
-              <CardDescription>Configure hotkeys and basic settings</CardDescription>
+              <CardTitle className="text-cyan-400">Radar/General Settings</CardTitle>
+              <CardDescription className="text-cyan-300/70">Configure hotkeys and basic settings</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -344,10 +343,10 @@ const Index = () => {
 
         {/* Loot Tab */}
         <TabsContent value="loot" className="space-y-4">
-          <Card>
+          <Card className="border-cyan-900/30 bg-[#1a1a1f]">
             <CardHeader>
-              <CardTitle>Loot Settings</CardTitle>
-              <CardDescription>Configure loot display options</CardDescription>
+              <CardTitle className="text-cyan-400">Loot Settings</CardTitle>
+              <CardDescription className="text-cyan-300/70">Configure loot display options</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
@@ -423,10 +422,10 @@ const Index = () => {
 
         {/* Quest Helper Tab */}
         <TabsContent value="quest" className="space-y-4">
-          <Card>
+          <Card className="border-cyan-900/30 bg-[#1a1a1f]">
             <CardHeader>
-              <CardTitle>Quest Helper</CardTitle>
-              <CardDescription>Configure quest assistance options</CardDescription>
+              <CardTitle className="text-cyan-400">Quest Helper</CardTitle>
+              <CardDescription className="text-cyan-300/70">Configure quest assistance options</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
@@ -445,10 +444,10 @@ const Index = () => {
 
         {/* Web Server Tab */}
         <TabsContent value="server" className="space-y-4">
-          <Card>
+          <Card className="border-cyan-900/30 bg-[#1a1a1f]">
             <CardHeader>
-              <CardTitle>Web Radar Server</CardTitle>
-              <CardDescription>Configure web server settings</CardDescription>
+              <CardTitle className="text-cyan-400">Web Radar Server</CardTitle>
+              <CardDescription className="text-cyan-300/70">Configure web server settings</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="flex items-center space-x-2">
@@ -513,10 +512,10 @@ const Index = () => {
 
         {/* Memory Features Tab */}
         <TabsContent value="memory" className="space-y-4">
-          <Card>
+          <Card className="border-cyan-900/30 bg-[#1a1a1f]">
             <CardHeader>
-              <CardTitle>Memory Write Features</CardTitle>
-              <CardDescription>Configure memory modification options</CardDescription>
+              <CardTitle className="text-cyan-400">Memory Write Features</CardTitle>
+              <CardDescription className="text-cyan-300/70">Configure memory modification options</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -715,10 +714,10 @@ const Index = () => {
 
         {/* Aimbot Tab */}
         <TabsContent value="aimbot" className="space-y-4">
-          <Card>
+          <Card className="border-cyan-900/30 bg-[#1a1a1f]">
             <CardHeader>
-              <CardTitle>Aimbot/ESP Configuration</CardTitle>
-              <CardDescription>Configure aiming and ESP settings</CardDescription>
+              <CardTitle className="text-cyan-400">Aimbot/ESP Configuration</CardTitle>
+              <CardDescription className="text-cyan-300/70">Configure aiming and ESP settings</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               {/* More detailed aimbot settings would go here */}
@@ -750,10 +749,10 @@ const Index = () => {
 
         {/* Monitor Info Tab */}
         <TabsContent value="monitor" className="space-y-4">
-          <Card>
+          <Card className="border-cyan-900/30 bg-[#1a1a1f]">
             <CardHeader>
-              <CardTitle>Monitor Info (Aimbot/ESP)</CardTitle>
-              <CardDescription>Configure display settings</CardDescription>
+              <CardTitle className="text-cyan-400">Monitor Info (Aimbot/ESP)</CardTitle>
+              <CardDescription className="text-cyan-300/70">Configure display settings</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -773,6 +772,10 @@ const Index = () => {
           </Card>
         </TabsContent>
       </Tabs>
+      
+      <footer className="mt-8 py-4 border-t border-cyan-900/30 text-cyan-300/50 text-sm">
+        Radar Control Panel v1.0.0 | Windows .NET 9 Application
+      </footer>
     </div>
   );
 };

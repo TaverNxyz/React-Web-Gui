@@ -1,3 +1,4 @@
+
 #root {
   max-width: 1280px;
   margin: 0 auto;
@@ -12,10 +13,10 @@
   transition: filter 300ms;
 }
 .logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
+  filter: drop-shadow(0 0 2em #00f0ffaa);
 }
 .logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+  filter: drop-shadow(0 0 2em #00f0ffaa);
 }
 
 @keyframes logo-spin {
@@ -35,8 +36,55 @@
 
 .card {
   padding: 2em;
+  background-color: #1a1a1f;
+  border: 1px solid #2a2a35;
 }
 
 .read-the-docs {
-  color: #888;
+  color: #00c8d4;
+}
+
+/* Custom styling for our radar app */
+.radar-app {
+  background-color: #121214;
+  color: #00f0ff;
+}
+
+.btn-cyan {
+  background-color: #00a0af;
+  color: #000;
+}
+
+.btn-cyan:hover {
+  background-color: #00c8d4;
+}
+
+input, select, textarea {
+  background-color: #1a1a1f !important;
+  border-color: #2a2a35 !important;
+  color: #00f0ff !important;
+}
+
+/* Custom dark styles for slider tracks and thumbs */
+input[type="range"]::-webkit-slider-runnable-track {
+  background-color: #2a2a35 !important;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  background-color: #00f0ff !important;
+}
+
+/* Dark scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+  background-color: #121214;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #2a2a35;
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: #00a0af;
 }
