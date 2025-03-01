@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -184,7 +183,7 @@ const Index = () => {
                     htmlFor="noWrapMalfunctionsEnabled"
                     className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                   >
-                    No Wrap Malfunctions
+                    No Weapon Malfunctions
                   </label>
                 </div>
                 
