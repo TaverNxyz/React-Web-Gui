@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -8,25 +7,26 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Slider } from "@/components/ui/slider";
-import { Settings, Target, MemoryStick } from "lucide-react";
+import { Settings, Target, MemoryStick, Radar } from "lucide-react";
 
 const Index = () => {
   return (
     <div className="radar-app min-h-screen flex flex-col">
       {/* Window title bar */}
-      <div className="window-titlebar flex justify-between items-center py-2 px-4">
-        <div className="text-lg font-bold">Radar Control Panel</div>
+      <div className="window-titlebar flex justify-between items-center py-2 px-4 bg-[#0a0a0c] border-b border-[#2a2a35]">
+        <div className="text-lg font-bold text-cyan-400">Radar Control Panel</div>
         <Link to="/radar">
-          <Button className="btn-cyan">
+          <Button className="bg-cyan-700 hover:bg-cyan-600 text-white flex items-center gap-2">
+            <Radar className="h-4 w-4" />
             Open Radar
           </Button>
         </Link>
       </div>
       
       {/* Content container */}
-      <div className="flex-1 p-4">
+      <div className="flex-1 p-4 bg-[#0a0a0c]">
         <Tabs defaultValue="general" className="w-full">
-          <TabsList className="tab-header">
+          <TabsList className="tab-header bg-[#1a1a1f] border border-[#2a2a35]">
             <TabsTrigger value="general">General</TabsTrigger>
             <TabsTrigger value="display">Display</TabsTrigger>
             <TabsTrigger value="memory" className="flex items-center gap-1">
@@ -47,18 +47,18 @@ const Index = () => {
           </TabsList>
           
           <TabsContent value="general">
-            <div className="card">
-              <h3 className="text-xl font-semibold mb-4">General Settings</h3>
+            <div className="card bg-[#1a1a1f] p-4 rounded-md border border-[#2a2a35]">
+              <h3 className="text-xl font-semibold mb-4 text-cyan-400">General Settings</h3>
               <div className="flex items-center space-x-2">
-                <Label htmlFor="scan-mode">Scan Mode</Label>
-                <select id="scan-mode" className="drop-down">
+                <Label htmlFor="scan-mode" className="text-gray-300">Scan Mode</Label>
+                <select id="scan-mode" className="drop-down bg-[#0a0a0c] text-gray-300 border border-[#2a2a35] rounded-md">
                   <option>Local Mode</option>
                   <option>Network Mode</option>
                 </select>
               </div>
-              <Separator className="my-2" />
+              <Separator className="my-2 bg-[#2a2a35]" />
               <div className="flex items-center space-x-2">
-                <Label htmlFor="auto-start">Auto Start</Label>
+                <Label htmlFor="auto-start" className="text-gray-300">Auto Start</Label>
                 <Switch id="auto-start" />
               </div>
             </div>
@@ -244,10 +244,18 @@ const Index = () => {
             </div>
           </TabsContent>
         </Tabs>
+        
+        <div className="fixed bottom-4 right-4">
+          <Link to="/radar">
+            <Button size="lg" className="bg-cyan-700 hover:bg-cyan-600 text-white flex items-center gap-2">
+              <Radar className="h-5 w-5" />
+              Return to Radar
+            </Button>
+          </Link>
+        </div>
       </div>
       
-      {/* Status bar */}
-      <div className="status-bar py-2 px-4">
+      <div className="status-bar py-2 px-4 bg-[#0a0a0c] border-t border-[#2a2a35] text-gray-400">
         Status: Ready
       </div>
     </div>

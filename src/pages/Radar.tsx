@@ -8,6 +8,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
+import { Cog } from "lucide-react";
 
 const Radar = () => {
   // State to track if map is free (used for the toggle button)
@@ -41,6 +42,17 @@ const Radar = () => {
           <div className="text-gray-400 hover:text-cyan-400 cursor-pointer">Player Watchlist</div>
           <div className="text-gray-400 hover:text-cyan-400 cursor-pointer">Loot Filters</div>
         </div>
+        
+        {/* Settings button (prominent) */}
+        <Link to="/">
+          <Button 
+            variant="outline" 
+            className="bg-[#0e0e10] border-cyan-800 hover:bg-[#1a1a20] text-cyan-400 flex items-center gap-2"
+          >
+            <Cog className="h-4 w-4" />
+            Settings
+          </Button>
+        </Link>
       </div>
       
       {/* Map Free button */}
