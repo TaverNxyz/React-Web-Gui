@@ -2,6 +2,12 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { 
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger
+} from "@/components/ui/dropdown-menu";
 
 const Radar = () => {
   // State to track if map is free (used for the toggle button)
@@ -13,7 +19,23 @@ const Radar = () => {
       <div className="flex items-center justify-between px-2 py-1 bg-[#0a0a0c] border-b border-[#2a2a35]">
         <div className="flex space-x-4">
           <div className="font-semibold text-cyan-400">Radar [ DEFAULT ]</div>
-          <Link to="/" className="text-gray-400 hover:text-cyan-400">Settings</Link>
+          
+          {/* File menu dropdown */}
+          <DropdownMenu>
+            <DropdownMenuTrigger className="text-gray-400 hover:text-cyan-400 cursor-pointer">
+              File
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="bg-[#0e0e10] border-[#2a2a35] text-cyan-400">
+              <DropdownMenuItem className="hover:bg-[#2a2a35] cursor-pointer">
+                <Link to="/" className="w-full">Settings</Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem className="hover:bg-[#2a2a35] cursor-pointer">Save Config</DropdownMenuItem>
+              <DropdownMenuItem className="hover:bg-[#2a2a35] cursor-pointer">Load Config</DropdownMenuItem>
+              <DropdownMenuItem className="hover:bg-[#2a2a35] cursor-pointer">Export Data</DropdownMenuItem>
+              <DropdownMenuItem className="hover:bg-[#2a2a35] cursor-pointer text-red-400">Exit</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+
           <div className="text-gray-400 hover:text-cyan-400 cursor-pointer">Player Loadouts</div>
           <div className="text-gray-400 hover:text-cyan-400 cursor-pointer">Player History</div>
           <div className="text-gray-400 hover:text-cyan-400 cursor-pointer">Player Watchlist</div>
