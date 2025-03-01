@@ -1,15 +1,19 @@
 
 /**
  * Connection handling for .NET integration
+ * Enhanced with additional security features and robustness
  */
 
 import type { InteropMessage, WindowWithHostObjects } from './types';
+import { CONNECTION_CONFIG } from './config';
 
 export class ConnectionHandler {
   private isConnected: boolean = false;
   private connectionAttempts: number = 0;
-  private maxConnectionAttempts: number = 20; // Try for 10 seconds at 500ms intervals
+  private maxConnectionAttempts: number = CONNECTION_CONFIG.MAX_CONNECTION_ATTEMPTS;
   private heartbeatInterval: number | null = null;
+  private connectionCheckInterval: number | null = null;
+  private lastMessageTimestamp: number = 0;
   private onConnectionChangeCallback: ((connected: boolean) => void) | null = null;
   private sendMessageCallback: ((type: string, payload: any) => void) | null = null;
 
@@ -38,6 +42,9 @@ export class ConnectionHandler {
           
           if (!message || !message.type) return;
           
+          // Update last message timestamp
+          this.lastMessageTimestamp = Date.now();
+          
           // Process incoming message using callback
           if (this.sendMessageCallback) {
             this.handleConnectionStatusMessage(message as InteropMessage);
@@ -53,12 +60,15 @@ export class ConnectionHandler {
         this.sendMessageCallback('CONNECT', { 
           version: "1.0.0", 
           capabilities: ["settings", "radar", "esp", "aimbot"],
-          timestamp: Date.now()
+          timestamp: Date.now(),
+          securityLevel: CONNECTION_CONFIG.SECURITY.ENCRYPT_PAYLOADS ? "encrypted" : "standard"
         });
       }
       
       // Start heartbeat
       this.startHeartbeat();
+      // Start connection monitoring
+      this.startConnectionMonitoring();
     }
   }
   
@@ -67,42 +77,56 @@ export class ConnectionHandler {
     const customWindow = window as unknown as WindowWithHostObjects;
     
     // Check if host has injected any special objects for communication
-    const checkInterval = setInterval(() => {
+    this.connectionCheckInterval = window.setInterval(() => {
       // Increment connection attempts
       this.connectionAttempts++;
       
       // Check for common .NET WebView host object patterns
       if (
-        customWindow.tarkovHost || 
-        customWindow.dmaHost || 
-        customWindow.externalHost || 
-        customWindow.hostApp || 
-        (customWindow.external && customWindow.external.notify) || 
-        (customWindow.external && customWindow.external.hostApp)
+        (CONNECTION_CONFIG.CHANNELS.CUSTOM_OBJECTS && (
+          customWindow.tarkovHost || 
+          customWindow.dmaHost || 
+          customWindow.externalHost || 
+          customWindow.hostApp)
+        ) || 
+        (CONNECTION_CONFIG.CHANNELS.EXTERNAL_NOTIFY && 
+          customWindow.external && 
+          customWindow.external.notify
+        )
       ) {
         this.updateConnectionStatus(true);
         console.log("[InteropService] Host object detected, connection established");
-        clearInterval(checkInterval);
+        
+        if (this.connectionCheckInterval !== null) {
+          clearInterval(this.connectionCheckInterval);
+          this.connectionCheckInterval = null;
+        }
         
         // Send connection acknowledgment
         if (this.sendMessageCallback) {
           this.sendMessageCallback('CONNECT', { 
             version: "1.0.0", 
             capabilities: ["settings", "radar", "esp", "aimbot"],
-            timestamp: Date.now()
+            timestamp: Date.now(),
+            securityLevel: CONNECTION_CONFIG.SECURITY.ENCRYPT_PAYLOADS ? "encrypted" : "standard"
           });
         }
         
         // Start heartbeat
         this.startHeartbeat();
+        // Start connection monitoring
+        this.startConnectionMonitoring();
       }
       
       // Give up after max attempts
       if (this.connectionAttempts >= this.maxConnectionAttempts) {
         console.log("[InteropService] No host object detected after max attempts, giving up");
-        clearInterval(checkInterval);
+        if (this.connectionCheckInterval !== null) {
+          clearInterval(this.connectionCheckInterval);
+          this.connectionCheckInterval = null;
+        }
       }
-    }, 500);
+    }, CONNECTION_CONFIG.RECONNECT_INTERVAL);
   }
   
   public startHeartbeat(): void {
@@ -111,12 +135,15 @@ export class ConnectionHandler {
       clearInterval(this.heartbeatInterval);
     }
     
-    // Send heartbeat every 5 seconds
+    // Send heartbeat at specified interval
     this.heartbeatInterval = window.setInterval(() => {
       if (this.sendMessageCallback) {
-        this.sendMessageCallback('HEARTBEAT', { timestamp: Date.now() });
+        this.sendMessageCallback('HEARTBEAT', { 
+          timestamp: Date.now(),
+          sessionDuration: Date.now() - this.lastMessageTimestamp
+        });
       }
-    }, 5000);
+    }, CONNECTION_CONFIG.HEARTBEAT_INTERVAL);
   }
 
   public stopHeartbeat(): void {
@@ -125,8 +152,28 @@ export class ConnectionHandler {
       this.heartbeatInterval = null;
     }
   }
+  
+  private startConnectionMonitoring(): void {
+    // Update the last message timestamp
+    this.lastMessageTimestamp = Date.now();
+    
+    // Check for connection timeout
+    const monitorInterval = window.setInterval(() => {
+      const now = Date.now();
+      // If no messages received for too long, consider disconnected
+      if (now - this.lastMessageTimestamp > CONNECTION_CONFIG.HEARTBEAT_INTERVAL * 3) {
+        if (this.isConnected) {
+          console.log("[InteropService] Connection timeout detected");
+          this.updateConnectionStatus(false);
+        }
+      }
+    }, CONNECTION_CONFIG.HEARTBEAT_INTERVAL);
+  }
 
   public handleConnectionStatusMessage(message: InteropMessage): void {
+    // Update last message timestamp
+    this.lastMessageTimestamp = Date.now();
+    
     if (message.type === 'CONNECT') {
       this.updateConnectionStatus(true);
       // Start heartbeat if not already started
@@ -153,6 +200,10 @@ export class ConnectionHandler {
 
   public forceConnectionStatus(status: boolean): void {
     this.updateConnectionStatus(status);
+    // Reset last message timestamp if forcing connection
+    if (status) {
+      this.lastMessageTimestamp = Date.now();
+    }
   }
 }
 

@@ -19,6 +19,10 @@ export interface InteropMessage {
   type: InteropMessageType;
   payload: any;
   timestamp: number;
+  sessionId?: string;
+  correlationId?: string;
+  signature?: string;
+  error?: string;
 }
 
 // Settings categories
