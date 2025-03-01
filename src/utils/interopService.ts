@@ -40,8 +40,14 @@ export interface RadarEntity {
   metadata?: Record<string, any>;
 }
 
+// Define custom host object types to avoid TypeScript errors
+interface CustomExternal {
+  notify?: (message: string) => void;
+  hostApp?: any;
+}
+
 // Define custom interfaces for .NET host object integration
-interface WindowWithHostObjects extends Window {
+interface WindowWithHostObjects {
   tarkovHost?: {
     receiveMessage: (message: string) => void;
   };
@@ -54,10 +60,7 @@ interface WindowWithHostObjects extends Window {
   hostApp?: {
     receiveMessage: (message: string) => void;
   };
-  external?: {
-    notify?: (message: string) => void;
-    hostApp?: any;
-  };
+  external?: CustomExternal;
   chrome?: {
     webview?: {
       addEventListener: (event: string, callback: (event: any) => void) => void;
@@ -111,8 +114,8 @@ class InteropService {
   }
   
   private setupWebView2Integration(): void {
-    // Cast window to our extended interface with host objects
-    const customWindow = window as WindowWithHostObjects;
+    // Access custom window properties using type assertion
+    const customWindow = window as unknown as WindowWithHostObjects;
     
     // Check if window.chrome.webview is available (WebView2 integration)
     if (customWindow.chrome && customWindow.chrome.webview) {
@@ -146,8 +149,8 @@ class InteropService {
   }
   
   private checkForHostObjects(): void {
-    // Cast window to our extended interface with host objects
-    const customWindow = window as WindowWithHostObjects;
+    // Access custom window properties using type assertion
+    const customWindow = window as unknown as WindowWithHostObjects;
     
     // Check if host has injected any special objects for communication
     const checkInterval = setInterval(() => {
@@ -160,8 +163,8 @@ class InteropService {
         customWindow.dmaHost || 
         customWindow.externalHost || 
         customWindow.hostApp || 
-        customWindow.external?.notify || 
-        customWindow.external?.hostApp
+        (customWindow.external && customWindow.external.notify) || 
+        (customWindow.external && customWindow.external.hostApp)
       ) {
         this.isConnected = true;
         console.log("[InteropService] Host object detected, connection established");
@@ -260,8 +263,8 @@ class InteropService {
     };
     
     try {
-      // Cast window to our extended interface with host objects
-      const customWindow = window as WindowWithHostObjects;
+      // Access custom window properties using type assertion
+      const customWindow = window as unknown as WindowWithHostObjects;
       
       // Try WebView2 communication first (most modern .NET + WebView2 integration)
       if (customWindow.chrome && customWindow.chrome.webview) {
