@@ -34,7 +34,7 @@ const Radar = () => {
       
       {/* Error message in red */}
       <div className="absolute top-[40px] w-full text-center text-red-500 text-sm">
-        >>> Scan Mode [Local Mode]
+        {`>>> Scan Mode [Local Mode]`}
       </div>
       
       {/* Main radar display area */}
