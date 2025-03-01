@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Slider } from "@/components/ui/slider";
+import { Settings, Target, MemoryStick } from "lucide-react";
 
 const Index = () => {
   return (
@@ -28,10 +29,23 @@ const Index = () => {
           <TabsList className="tab-header">
             <TabsTrigger value="general">General</TabsTrigger>
             <TabsTrigger value="display">Display</TabsTrigger>
+            <TabsTrigger value="memory" className="flex items-center gap-1">
+              <MemoryStick className="h-4 w-4" />
+              Memory
+            </TabsTrigger>
+            <TabsTrigger value="aimbot" className="flex items-center gap-1">
+              <Target className="h-4 w-4" />
+              Aimbot
+            </TabsTrigger>
+            <TabsTrigger value="settings" className="flex items-center gap-1">
+              <Settings className="h-4 w-4" />
+              Settings
+            </TabsTrigger>
             <TabsTrigger value="audio">Audio</TabsTrigger>
             <TabsTrigger value="alerts">Alerts</TabsTrigger>
             <TabsTrigger value="network">Network</TabsTrigger>
           </TabsList>
+          
           <TabsContent value="general">
             <div className="card">
               <h3 className="text-xl font-semibold mb-4">General Settings</h3>
@@ -49,6 +63,7 @@ const Index = () => {
               </div>
             </div>
           </TabsContent>
+          
           <TabsContent value="display">
             <div className="card">
               <h3 className="text-xl font-semibold mb-4">Display Settings</h3>
@@ -67,6 +82,114 @@ const Index = () => {
               </div>
             </div>
           </TabsContent>
+          
+          <TabsContent value="memory">
+            <div className="card">
+              <h3 className="text-xl font-semibold mb-4">Memory Settings</h3>
+              <div className="flex flex-col space-y-4">
+                <div className="flex items-center space-x-2">
+                  <Label htmlFor="enable-memory">Enable Memory</Label>
+                  <Switch id="enable-memory" />
+                </div>
+                <Separator className="my-2" />
+                <div className="flex items-center space-x-2">
+                  <Label htmlFor="memory-address">Base Address</Label>
+                  <Input id="memory-address" placeholder="0x00000000" />
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Label htmlFor="memory-value">Value</Label>
+                  <Input id="memory-value" placeholder="0x00000000" />
+                </div>
+                <div className="space-y-1">
+                  <Label htmlFor="memory-profile">Memory Profile</Label>
+                  <select id="memory-profile" className="drop-down w-full">
+                    <option>Default</option>
+                    <option>Custom</option>
+                    <option>Advanced</option>
+                  </select>
+                </div>
+                <div className="mt-4">
+                  <Button variant="outline" className="mr-2">Export Profile</Button>
+                  <Button>Apply Settings</Button>
+                </div>
+              </div>
+            </div>
+          </TabsContent>
+          
+          <TabsContent value="aimbot">
+            <div className="card">
+              <h3 className="text-xl font-semibold mb-4">Aimbot Settings</h3>
+              <div className="flex flex-col space-y-4">
+                <div className="flex items-center space-x-2">
+                  <Label htmlFor="enable-aimbot">Enable Aimbot</Label>
+                  <Switch id="enable-aimbot" />
+                </div>
+                <Separator className="my-2" />
+                <div className="flex items-center space-x-2">
+                  <Label htmlFor="aim-key">Aim Key</Label>
+                  <select id="aim-key" className="drop-down">
+                    <option>Alt</option>
+                    <option>Shift</option>
+                    <option>Mouse4</option>
+                    <option>Mouse5</option>
+                  </select>
+                </div>
+                <div className="flex flex-col space-y-2">
+                  <Label htmlFor="smoothness">Smoothness</Label>
+                  <Slider id="smoothness" defaultValue={[50]} max={100} step={1} />
+                </div>
+                <div className="flex flex-col space-y-2">
+                  <Label htmlFor="fov">FOV</Label>
+                  <Slider id="fov" defaultValue={[30]} max={100} step={1} />
+                </div>
+                <div className="space-y-1">
+                  <Label htmlFor="aim-priority">Aim Priority</Label>
+                  <select id="aim-priority" className="drop-down w-full">
+                    <option>Nearest</option>
+                    <option>Health</option>
+                    <option>Distance</option>
+                  </select>
+                </div>
+                <div className="mt-4">
+                  <Button>Save Settings</Button>
+                </div>
+              </div>
+            </div>
+          </TabsContent>
+          
+          <TabsContent value="settings">
+            <div className="card">
+              <h3 className="text-xl font-semibold mb-4">Advanced Settings</h3>
+              <div className="flex flex-col space-y-4">
+                <div className="flex items-center space-x-2">
+                  <Label htmlFor="process-name">Process Name</Label>
+                  <Input id="process-name" placeholder="game.exe" />
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Label htmlFor="refresh-rate">Refresh Rate</Label>
+                  <select id="refresh-rate" className="drop-down">
+                    <option>60 Hz</option>
+                    <option>120 Hz</option>
+                    <option>144 Hz</option>
+                    <option>240 Hz</option>
+                  </select>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Label htmlFor="overlay-color">Overlay Color</Label>
+                  <Input id="overlay-color" type="color" defaultValue="#00f0ff" />
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Label htmlFor="debug-mode">Debug Mode</Label>
+                  <Switch id="debug-mode" />
+                </div>
+                <div className="mt-4 flex space-x-2">
+                  <Button variant="outline">Reset to Default</Button>
+                  <Button>Apply Settings</Button>
+                </div>
+              </div>
+            </div>
+          </TabsContent>
+          
           <TabsContent value="audio">
             <div className="card">
               <h3 className="text-xl font-semibold mb-4">Audio Settings</h3>
@@ -85,6 +208,7 @@ const Index = () => {
               </div>
             </div>
           </TabsContent>
+          
           <TabsContent value="alerts">
             <div className="card">
               <h3 className="text-xl font-semibold mb-4">Alerts Settings</h3>
@@ -103,6 +227,7 @@ const Index = () => {
               </div>
             </div>
           </TabsContent>
+          
           <TabsContent value="network">
             <div className="card">
               <h3 className="text-xl font-semibold mb-4">Network Settings</h3>
