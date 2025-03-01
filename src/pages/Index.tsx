@@ -38,7 +38,7 @@ const Index = () => {
       <Tabs defaultValue="memory" className="w-full">
         <TabsList className="grid grid-cols-4 mb-4">
           <TabsTrigger value="memory" className="flex items-center">
-            <Monitor className="mr-2 h-4 w-4" /> Memory
+            <Monitor className="mr-2 h-4 w-4" /> Sauce Dispenser
           </TabsTrigger>
           <TabsTrigger value="aimbot" className="flex items-center">
             <Crosshair className="mr-2 h-4 w-4" /> Aimbot
@@ -52,9 +52,9 @@ const Index = () => {
         </TabsList>
 
         <div className="bg-slate-900 rounded-md p-6 shadow-lg">
-          {/* Memory Tab */}
+          {/* Sauce Dispenser Tab (formerly Memory) */}
           <TabsContent value="memory" className="space-y-4">
-            <h2 className="text-xl font-semibold text-cyan-400 mb-4">Memory Settings</h2>
+            <h2 className="text-xl font-semibold text-cyan-400 mb-4">Sauce Dispenser Settings</h2>
             <div className="space-y-4">
               <div className="flex items-center space-x-2">
                 <Checkbox
@@ -66,7 +66,7 @@ const Index = () => {
                   htmlFor="memoryEnabled"
                   className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                 >
-                  Enable Memory Reader
+                  Enable Sauce Dispenser
                 </label>
               </div>
             </div>
