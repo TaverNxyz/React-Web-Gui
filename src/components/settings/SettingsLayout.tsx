@@ -1,9 +1,7 @@
 
 import React from "react";
-import { Link } from "react-router-dom";
-import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ArrowLeft, Monitor, Crosshair, Eye, Settings } from "lucide-react";
+import { Monitor, Crosshair, Eye, Settings } from "lucide-react";
 
 interface SettingsLayoutProps {
   sauceDispenserContent: React.ReactNode;
@@ -22,11 +20,6 @@ const SettingsLayout: React.FC<SettingsLayoutProps> = ({
     <div className="container mx-auto p-4 max-w-4xl">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-cyan-400">Settings Panel</h1>
-        <Link to="/radar">
-          <Button className="bg-cyan-600 hover:bg-cyan-500">
-            <ArrowLeft className="mr-2 h-4 w-4" /> Return to Radar
-          </Button>
-        </Link>
       </div>
 
       <Tabs defaultValue="memory" className="w-full">
