@@ -36,7 +36,7 @@
 
 .card {
   padding: 2em;
-  background-color: #1a1a1f;
+  background-color: #0e0e10;
   border: 1px solid #2a2a35;
 }
 
@@ -46,7 +46,7 @@
 
 /* Custom styling for our radar app */
 .radar-app {
-  background-color: #121214;
+  background-color: #0a0a0c;
   color: #00f0ff;
 }
 
@@ -60,7 +60,7 @@
 }
 
 input, select, textarea {
-  background-color: #1a1a1f !important;
+  background-color: #12121a !important;
   border-color: #2a2a35 !important;
   color: #00f0ff !important;
 }
@@ -77,7 +77,7 @@ input[type="range"]::-webkit-slider-thumb {
 /* Dark scrollbar */
 ::-webkit-scrollbar {
   width: 10px;
-  background-color: #121214;
+  background-color: #0a0a0c;
 }
 
 ::-webkit-scrollbar-thumb {
@@ -87,4 +87,76 @@ input[type="range"]::-webkit-slider-thumb {
 
 ::-webkit-scrollbar-thumb:hover {
   background-color: #00a0af;
+}
+
+/* Dark mode overrides for Radar app */
+.tab-header {
+  background-color: #0a0a0c;
+  border-bottom: 1px solid #2a2a35;
+}
+
+.card, .drop-down, .popup-menu {
+  background-color: #0e0e10;
+  border-color: #2a2a35;
+}
+
+.window-frame {
+  background-color: #0a0a0c;
+  border: 1px solid #2a2a35;
+  box-shadow: 0 5px 10px rgba(0,0,0,0.5);
+}
+
+.window-titlebar {
+  background-color: #12121a;
+  border-bottom: 1px solid #2a2a35;
+}
+
+.status-bar {
+  background-color: #12121a;
+  border-top: 1px solid #2a2a35;
+  color: #00c8d4;
+}
+
+.menu-dropdown {
+  background-color: #0e0e10;
+  border: 1px solid #2a2a35;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+}
+
+.data-table {
+  background-color: #0e0e10;
+  border-color: #2a2a35;
+}
+
+.data-table th {
+  background-color: #12121a;
+}
+
+.data-table tr:nth-child(even) {
+  background-color: #12121a;
+}
+
+.data-table tr:hover {
+  background-color: #2a2a35;
+}
+
+/* Custom Windows UI styling */
+.win-button {
+  background-color: #12121a;
+  border: 1px solid #2a2a35;
+  color: #00f0ff;
+}
+
+.win-button:hover {
+  background-color: #2a2a35;
+}
+
+.win-button:active {
+  background-color: #00a0af;
+  color: #000;
+}
+
+.win-panel {
+  background-color: #0a0a0c;
+  border: 1px solid #2a2a35;
 }
