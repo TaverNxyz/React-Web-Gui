@@ -40,7 +40,7 @@ const Index = () => {
   const [playerDistance, setPlayerDistance] = useState([500]);
   const [itemDistance, setItemDistance] = useState([300]);
   
-  // Misc features
+  // Misc features (moved from UI to Sauce Dispenser)
   const [infiniteStaminaEnabled, setInfiniteStaminaEnabled] = useState(false);
   const [fastLoadEnabled, setFastLoadEnabled] = useState(false);
   const [lootThroughWallsEnabled, setLootThroughWallsEnabled] = useState(false);
@@ -125,6 +125,144 @@ const Index = () => {
                 >
                   Anti-Page
                 </label>
+              </div>
+            </div>
+            
+            {/* Moved from UI tab - Additional features */}
+            <div className="mt-6">
+              <h3 className="text-lg font-medium text-cyan-400 mb-2">Additional Features</h3>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="infiniteStaminaEnabled"
+                    checked={infiniteStaminaEnabled}
+                    onCheckedChange={(checked) => setInfiniteStaminaEnabled(!!checked)}
+                  />
+                  <label
+                    htmlFor="infiniteStaminaEnabled"
+                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                  >
+                    Infinite Stamina (Risky)
+                  </label>
+                </div>
+                
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="fastLoadEnabled"
+                    checked={fastLoadEnabled}
+                    onCheckedChange={(checked) => setFastLoadEnabled(!!checked)}
+                  />
+                  <label
+                    htmlFor="fastLoadEnabled"
+                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                  >
+                    Fast Load/Unload
+                  </label>
+                </div>
+                
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="moveSpeedEnabled"
+                    checked={moveSpeedEnabled}
+                    onCheckedChange={(checked) => setMoveSpeedEnabled(!!checked)}
+                  />
+                  <label
+                    htmlFor="moveSpeedEnabled"
+                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                  >
+                    1.2x Move Speed (Risky)
+                  </label>
+                </div>
+                
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="noWrapMalfunctionsEnabled"
+                    checked={noWrapMalfunctionsEnabled}
+                    onCheckedChange={(checked) => setNoWrapMalfunctionsEnabled(!!checked)}
+                  />
+                  <label
+                    htmlFor="noWrapMalfunctionsEnabled"
+                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                  >
+                    No Wrap Malfunctions
+                  </label>
+                </div>
+                
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="hideRaidInfoEnabled"
+                    checked={hideRaidInfoEnabled}
+                    onCheckedChange={(checked) => setHideRaidInfoEnabled(!!checked)}
+                  />
+                  <label
+                    htmlFor="hideRaidInfoEnabled"
+                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                  >
+                    Hide Raid Info
+                  </label>
+                </div>
+                
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="disableInventoryBlurEnabled"
+                    checked={disableInventoryBlurEnabled}
+                    onCheckedChange={(checked) => setDisableInventoryBlurEnabled(!!checked)}
+                  />
+                  <label
+                    htmlFor="disableInventoryBlurEnabled"
+                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                  >
+                    Disable Inventory Blur
+                  </label>
+                </div>
+                
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="fullBrightEnabled"
+                    checked={fullBrightEnabled}
+                    onCheckedChange={(checked) => setFullBrightEnabled(!!checked)}
+                  />
+                  <label
+                    htmlFor="fullBrightEnabled"
+                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                  >
+                    Full Bright
+                  </label>
+                </div>
+                
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="rageModeEnabled"
+                    checked={rageModeEnabled}
+                    onCheckedChange={(checked) => setRageModeEnabled(!!checked)}
+                  />
+                  <label
+                    htmlFor="rageModeEnabled"
+                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                  >
+                    Rage Mode (Risky)
+                  </label>
+                </div>
+              </div>
+              
+              <div className="mt-4">
+                <h3 className="text-lg font-medium text-cyan-400 mb-2">Toggle Options</h3>
+                <div className="flex flex-wrap gap-2">
+                  <Button 
+                    variant="outline" 
+                    className="bg-slate-800 border-slate-700 hover:bg-slate-700"
+                    onClick={() => setAntiAFKEnabled(!antiAFKEnabled)}
+                  >
+                    Anti-AFK {antiAFKEnabled ? '(ON)' : '(OFF)'}
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    className="bg-slate-800 border-slate-700 hover:bg-slate-700"
+                    onClick={() => setGymHackEnabled(!gymHackEnabled)}
+                  >
+                    Gym Hack {gymHackEnabled ? '(ON)' : '(OFF)'}
+                  </Button>
+                </div>
               </div>
             </div>
             
@@ -410,144 +548,10 @@ const Index = () => {
             </div>
           </TabsContent>
 
-          {/* UI Tab */}
+          {/* UI Tab - Only Monitor Info */}
           <TabsContent value="ui" className="space-y-4">
             <h2 className="text-xl font-semibold text-cyan-400 mb-4">UI Settings</h2>
             <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="infiniteStaminaEnabled"
-                    checked={infiniteStaminaEnabled}
-                    onCheckedChange={(checked) => setInfiniteStaminaEnabled(!!checked)}
-                  />
-                  <label
-                    htmlFor="infiniteStaminaEnabled"
-                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                  >
-                    Infinite Stamina (Risky)
-                  </label>
-                </div>
-                
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="fastLoadEnabled"
-                    checked={fastLoadEnabled}
-                    onCheckedChange={(checked) => setFastLoadEnabled(!!checked)}
-                  />
-                  <label
-                    htmlFor="fastLoadEnabled"
-                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                  >
-                    Fast Load/Unload
-                  </label>
-                </div>
-                
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="moveSpeedEnabled"
-                    checked={moveSpeedEnabled}
-                    onCheckedChange={(checked) => setMoveSpeedEnabled(!!checked)}
-                  />
-                  <label
-                    htmlFor="moveSpeedEnabled"
-                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                  >
-                    1.2x Move Speed (Risky)
-                  </label>
-                </div>
-                
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="noWrapMalfunctionsEnabled"
-                    checked={noWrapMalfunctionsEnabled}
-                    onCheckedChange={(checked) => setNoWrapMalfunctionsEnabled(!!checked)}
-                  />
-                  <label
-                    htmlFor="noWrapMalfunctionsEnabled"
-                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                  >
-                    No Wrap Malfunctions
-                  </label>
-                </div>
-                
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="hideRaidInfoEnabled"
-                    checked={hideRaidInfoEnabled}
-                    onCheckedChange={(checked) => setHideRaidInfoEnabled(!!checked)}
-                  />
-                  <label
-                    htmlFor="hideRaidInfoEnabled"
-                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                  >
-                    Hide Raid Info
-                  </label>
-                </div>
-                
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="disableInventoryBlurEnabled"
-                    checked={disableInventoryBlurEnabled}
-                    onCheckedChange={(checked) => setDisableInventoryBlurEnabled(!!checked)}
-                  />
-                  <label
-                    htmlFor="disableInventoryBlurEnabled"
-                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                  >
-                    Disable Inventory Blur
-                  </label>
-                </div>
-                
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="fullBrightEnabled"
-                    checked={fullBrightEnabled}
-                    onCheckedChange={(checked) => setFullBrightEnabled(!!checked)}
-                  />
-                  <label
-                    htmlFor="fullBrightEnabled"
-                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                  >
-                    Full Bright
-                  </label>
-                </div>
-                
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="rageModeEnabled"
-                    checked={rageModeEnabled}
-                    onCheckedChange={(checked) => setRageModeEnabled(!!checked)}
-                  />
-                  <label
-                    htmlFor="rageModeEnabled"
-                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                  >
-                    Rage Mode (Risky)
-                  </label>
-                </div>
-              </div>
-              
-              <div className="mt-4">
-                <h3 className="text-lg font-medium text-cyan-400 mb-2">Additional Options</h3>
-                <div className="flex flex-wrap gap-2">
-                  <Button 
-                    variant="outline" 
-                    className="bg-slate-800 border-slate-700 hover:bg-slate-700"
-                    onClick={() => setAntiAFKEnabled(!antiAFKEnabled)}
-                  >
-                    Anti-AFK {antiAFKEnabled ? '(ON)' : '(OFF)'}
-                  </Button>
-                  <Button 
-                    variant="outline" 
-                    className="bg-slate-800 border-slate-700 hover:bg-slate-700"
-                    onClick={() => setGymHackEnabled(!gymHackEnabled)}
-                  >
-                    Gym Hack {gymHackEnabled ? '(ON)' : '(OFF)'}
-                  </Button>
-                </div>
-              </div>
-              
               <div className="mt-4">
                 <h3 className="text-lg font-medium text-cyan-400 mb-2">Monitor Info (Aimbot/ESP)</h3>
                 <div className="grid grid-cols-2 gap-4">
