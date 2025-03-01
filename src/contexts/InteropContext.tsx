@@ -1,6 +1,6 @@
 
 import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import interopService, { InteropMessage, RadarEntity } from '../utils/interopService';
+import interopService, { InteropMessage, RadarEntity } from '../utils/interop';
 import { useToast } from '@/hooks/use-toast';
 
 interface InteropContextType {
