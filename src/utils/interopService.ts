@@ -40,6 +40,32 @@ export interface RadarEntity {
   metadata?: Record<string, any>;
 }
 
+// Define custom interfaces for .NET host object integration
+interface WindowWithHostObjects extends Window {
+  tarkovHost?: {
+    receiveMessage: (message: string) => void;
+  };
+  dmaHost?: {
+    receiveMessage: (message: string) => void;
+  };
+  externalHost?: {
+    receiveMessage: (message: string) => void;
+  };
+  hostApp?: {
+    receiveMessage: (message: string) => void;
+  };
+  external?: {
+    notify?: (message: string) => void;
+    hostApp?: any;
+  };
+  chrome?: {
+    webview?: {
+      addEventListener: (event: string, callback: (event: any) => void) => void;
+      postMessage: (message: string) => void;
+    }
+  };
+}
+
 class InteropService {
   private static instance: InteropService;
   private isConnected: boolean = false;
@@ -85,14 +111,15 @@ class InteropService {
   }
   
   private setupWebView2Integration(): void {
+    // Cast window to our extended interface with host objects
+    const customWindow = window as WindowWithHostObjects;
+    
     // Check if window.chrome.webview is available (WebView2 integration)
-    // @ts-ignore - WebView2 specific API
-    if (window.chrome && window.chrome.webview) {
+    if (customWindow.chrome && customWindow.chrome.webview) {
       console.log("[InteropService] WebView2 detected, setting up direct communication");
       
       // Listen for messages from the .NET host via WebView2
-      // @ts-ignore - WebView2 specific API
-      window.chrome.webview.addEventListener('message', (event: any) => {
+      customWindow.chrome.webview.addEventListener('message', (event: any) => {
         try {
           const message = typeof event.data === 'string' ? JSON.parse(event.data) : event.data;
           
@@ -119,21 +146,22 @@ class InteropService {
   }
   
   private checkForHostObjects(): void {
+    // Cast window to our extended interface with host objects
+    const customWindow = window as WindowWithHostObjects;
+    
     // Check if host has injected any special objects for communication
     const checkInterval = setInterval(() => {
       // Increment connection attempts
       this.connectionAttempts++;
       
       // Check for common .NET WebView host object patterns
-      // @ts-ignore - Check for potential objects injected by the .NET WebView host
       if (
-        window.tarkovHost || 
-        window.dmaHost || 
-        window.externalHost || 
-        window.hostApp || 
-        window.external?.notify || 
-        // @ts-ignore - WPF/WinForms WebBrowser control
-        window.external?.hostApp
+        customWindow.tarkovHost || 
+        customWindow.dmaHost || 
+        customWindow.externalHost || 
+        customWindow.hostApp || 
+        customWindow.external?.notify || 
+        customWindow.external?.hostApp
       ) {
         this.isConnected = true;
         console.log("[InteropService] Host object detected, connection established");
@@ -232,11 +260,12 @@ class InteropService {
     };
     
     try {
+      // Cast window to our extended interface with host objects
+      const customWindow = window as WindowWithHostObjects;
+      
       // Try WebView2 communication first (most modern .NET + WebView2 integration)
-      // @ts-ignore - WebView2 specific API
-      if (window.chrome && window.chrome.webview) {
-        // @ts-ignore - WebView2 specific API
-        window.chrome.webview.postMessage(JSON.stringify(message));
+      if (customWindow.chrome && customWindow.chrome.webview) {
+        customWindow.chrome.webview.postMessage(JSON.stringify(message));
       }
       
       // Try standard postMessage to parent
@@ -245,35 +274,25 @@ class InteropService {
       }
       
       // Try WPF/WinForms WebBrowser control
-      // @ts-ignore
-      if (window.external && typeof window.external.notify === 'function') {
-        // @ts-ignore
-        window.external.notify(JSON.stringify(message));
+      if (customWindow.external && typeof customWindow.external.notify === 'function') {
+        customWindow.external.notify(JSON.stringify(message));
       }
       
       // Try any injected host objects
-      // @ts-ignore - These properties would be injected by the .NET host
-      if (window.tarkovHost && typeof window.tarkovHost.receiveMessage === 'function') {
-        // @ts-ignore
-        window.tarkovHost.receiveMessage(JSON.stringify(message));
+      if (customWindow.tarkovHost && typeof customWindow.tarkovHost.receiveMessage === 'function') {
+        customWindow.tarkovHost.receiveMessage(JSON.stringify(message));
       }
       
-      // @ts-ignore
-      if (window.dmaHost && typeof window.dmaHost.receiveMessage === 'function') {
-        // @ts-ignore
-        window.dmaHost.receiveMessage(JSON.stringify(message));
+      if (customWindow.dmaHost && typeof customWindow.dmaHost.receiveMessage === 'function') {
+        customWindow.dmaHost.receiveMessage(JSON.stringify(message));
       }
       
-      // @ts-ignore
-      if (window.externalHost && typeof window.externalHost.receiveMessage === 'function') {
-        // @ts-ignore
-        window.externalHost.receiveMessage(JSON.stringify(message));
+      if (customWindow.externalHost && typeof customWindow.externalHost.receiveMessage === 'function') {
+        customWindow.externalHost.receiveMessage(JSON.stringify(message));
       }
       
-      // @ts-ignore
-      if (window.hostApp && typeof window.hostApp.receiveMessage === 'function') {
-        // @ts-ignore
-        window.hostApp.receiveMessage(JSON.stringify(message));
+      if (customWindow.hostApp && typeof customWindow.hostApp.receiveMessage === 'function') {
+        customWindow.hostApp.receiveMessage(JSON.stringify(message));
       }
       
       console.log(`[InteropService] Sent message: ${type}`);
