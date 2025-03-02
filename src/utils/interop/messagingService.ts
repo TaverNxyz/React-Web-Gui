@@ -4,20 +4,23 @@
  * Enhanced with security features
  */
 
-import type { InteropMessage, InteropMessageType, WindowWithHostObjects } from './types';
+import type { InteropMessage, InteropMessageType } from './types';
 import SecurityUtils from './securityUtils';
 import { CONNECTION_CONFIG } from './config';
+import MessageHandler from './messageHandler';
+import ResponseTracker from './responseTracker';
+import MessageTransport from './messageTransport';
 
 export class MessagingService {
-  private messageHandlers: Map<InteropMessageType, ((message: InteropMessage) => void)[]> = new Map();
-  private pendingResponses: Map<string, {
-    resolve: (value: any) => void,
-    reject: (reason: any) => void,
-    timeout: number
-  }> = new Map();
+  private messageHandler: MessageHandler;
+  private responseTracker: ResponseTracker;
+  private messageTransport: MessageTransport;
   private sessionId: string;
 
   constructor() {
+    this.messageHandler = new MessageHandler();
+    this.responseTracker = new ResponseTracker();
+    this.messageTransport = new MessageTransport();
     this.sessionId = SecurityUtils.generateSessionId();
     console.log(`[InteropService] Initialized with session ID: ${this.sessionId}`);
   }
@@ -26,21 +29,14 @@ export class MessagingService {
    * Register a handler for a specific message type
    */
   public on(type: InteropMessageType, handler: (message: InteropMessage) => void): void {
-    const handlers = this.messageHandlers.get(type) || [];
-    handlers.push(handler);
-    this.messageHandlers.set(type, handlers);
+    this.messageHandler.on(type, handler);
   }
   
   /**
    * Remove a handler for a specific message type
    */
   public off(type: InteropMessageType, handler: (message: InteropMessage) => void): void {
-    const handlers = this.messageHandlers.get(type) || [];
-    const index = handlers.indexOf(handler);
-    if (index !== -1) {
-      handlers.splice(index, 1);
-      this.messageHandlers.set(type, handlers);
-    }
+    this.messageHandler.off(type, handler);
   }
 
   /**
@@ -52,30 +48,17 @@ export class MessagingService {
     }
     
     // Check for response correlation ID and resolve any pending promises
-    if (message.correlationId && this.pendingResponses.has(message.correlationId)) {
-      const pendingResponse = this.pendingResponses.get(message.correlationId);
-      if (pendingResponse) {
-        clearTimeout(pendingResponse.timeout);
-        this.pendingResponses.delete(message.correlationId);
-        
-        if (message.error) {
-          pendingResponse.reject(message.error);
-        } else {
-          pendingResponse.resolve(message.payload);
-        }
-        return;
+    if (message.correlationId && this.responseTracker.hasResponse(message.correlationId)) {
+      if (message.error) {
+        this.responseTracker.rejectResponse(message.correlationId, message.error);
+      } else {
+        this.responseTracker.resolveResponse(message.correlationId, message.payload);
       }
+      return;
     }
     
     // Execute all registered handlers for this message type
-    const handlers = this.messageHandlers.get(message.type) || [];
-    handlers.forEach(handler => {
-      try {
-        handler(message);
-      } catch (error) {
-        console.error(`[InteropService] Error in handler for ${message.type}:`, error);
-      }
-    });
+    this.messageHandler.executeHandlers(message);
   }
   
   /**
@@ -132,16 +115,11 @@ export class MessagingService {
       
       // Set up timeout
       const timeoutId = window.setTimeout(() => {
-        this.pendingResponses.delete(correlationId);
         reject(new Error(`Timeout waiting for response to message type: ${type}`));
       }, timeout);
       
       // Store the promise handlers
-      this.pendingResponses.set(correlationId, {
-        resolve,
-        reject,
-        timeout: timeoutId
-      });
+      this.responseTracker.trackResponse(correlationId, resolve, reject, timeoutId);
       
       // Send the message
       this.sendMessageToHost(message);
@@ -152,61 +130,13 @@ export class MessagingService {
    * Actually send the message to the host via available channels
    */
   private sendMessageToHost(message: InteropMessage): void {
-    try {
-      // Access custom window properties using type assertion
-      const customWindow = window as unknown as WindowWithHostObjects;
-      
-      // Prepare payload - obfuscate if enabled
-      const messageToSend = CONNECTION_CONFIG.SECURITY.ENCRYPT_PAYLOADS 
-        ? SecurityUtils.obfuscatePayload(message)
-        : JSON.stringify(message);
-      
-      let sent = false;
-      
-      // Try WebView2 communication first (most modern .NET + WebView2 integration)
-      if (CONNECTION_CONFIG.CHANNELS.WEBVIEW2 && customWindow.chrome && customWindow.chrome.webview) {
-        customWindow.chrome.webview.postMessage(messageToSend);
-        sent = true;
-      }
-      
-      // Try standard postMessage to parent
-      if (!sent && CONNECTION_CONFIG.CHANNELS.PARENT_WINDOW && window.parent && window.parent !== window) {
-        window.parent.postMessage(message, '*');
-        sent = true;
-      }
-      
-      // Try WPF/WinForms WebBrowser control
-      if (!sent && CONNECTION_CONFIG.CHANNELS.EXTERNAL_NOTIFY && 
-          customWindow.external && typeof customWindow.external.notify === 'function') {
-        customWindow.external.notify(messageToSend);
-        sent = true;
-      }
-      
-      // Try any injected host objects
-      if (!sent && CONNECTION_CONFIG.CHANNELS.CUSTOM_OBJECTS) {
-        if (customWindow.tarkovHost && typeof customWindow.tarkovHost.receiveMessage === 'function') {
-          customWindow.tarkovHost.receiveMessage(messageToSend);
-          sent = true;
-        } else if (customWindow.dmaHost && typeof customWindow.dmaHost.receiveMessage === 'function') {
-          customWindow.dmaHost.receiveMessage(messageToSend);
-          sent = true;
-        } else if (customWindow.externalHost && typeof customWindow.externalHost.receiveMessage === 'function') {
-          customWindow.externalHost.receiveMessage(messageToSend);
-          sent = true;
-        } else if (customWindow.hostApp && typeof customWindow.hostApp.receiveMessage === 'function') {
-          customWindow.hostApp.receiveMessage(messageToSend);
-          sent = true;
-        }
-      }
-      
-      if (CONNECTION_CONFIG.DEBUG.LOG_MESSAGES && sent) {
-        console.log(`[InteropService] Sent message: ${message.type}`);
-      } else if (!sent) {
-        console.warn(`[InteropService] Failed to send message: ${message.type} - No available channels`);
-      }
-    } catch (error) {
-      console.error("[InteropService] Error sending message:", error);
-    }
+    // Prepare payload - obfuscate if enabled
+    const messageToSend = CONNECTION_CONFIG.SECURITY.ENCRYPT_PAYLOADS 
+      ? SecurityUtils.obfuscatePayload(message)
+      : JSON.stringify(message);
+    
+    // Use the transport service to send the message
+    this.messageTransport.sendMessageToHost(messageToSend);
   }
 
   /**
