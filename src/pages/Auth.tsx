@@ -26,22 +26,32 @@ const Auth = () => {
       // In a real implementation, you would handle the response
       // For demo purposes, we'll just simulate a successful login
       setTimeout(() => {
+        // Set authentication status
+        sessionStorage.setItem("authenticated", "true");
+        
         setIsLoading(false);
         toast({
           title: "Authentication Successful",
           description: "Welcome back, " + username,
         });
-        navigate("/radar");
+        
+        // After successful login, navigate to the dashboard with settings panel
+        navigate("/dashboard");
       }, 1500);
     } else {
       // Simulate login for development/testing
       setTimeout(() => {
+        // Set authentication status
+        sessionStorage.setItem("authenticated", "true");
+        
         setIsLoading(false);
         toast({
           title: "Simulated Login",
           description: "Host not connected. Simulating successful login.",
         });
-        navigate("/radar");
+        
+        // After successful login, navigate to the dashboard with settings panel
+        navigate("/dashboard");
       }, 1500);
     }
   };
@@ -49,17 +59,18 @@ const Auth = () => {
   const simulateLogin = () => {
     setIsLoading(true);
     setTimeout(() => {
+      // Set authentication status
+      sessionStorage.setItem("authenticated", "true");
+      
       setIsLoading(false);
       toast({
         title: "Simulation Successful",
         description: "You've been logged in automatically",
       });
-      navigate("/radar");
+      
+      // Navigate to dashboard instead of radar
+      navigate("/dashboard");
     }, 1500);
-  };
-
-  const goToSettings = () => {
-    navigate("/dashboard");
   };
 
   return (
@@ -107,13 +118,6 @@ const Auth = () => {
             disabled={isLoading}
           >
             Simulate Login
-          </Button>
-          <Button 
-            variant="outline" 
-            className="w-full border-cyan-800 text-cyan-400" 
-            onClick={goToSettings}
-          >
-            Go to Settings Panel
           </Button>
         </CardFooter>
       </Card>
