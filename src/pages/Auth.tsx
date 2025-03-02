@@ -35,8 +35,8 @@ const Auth = () => {
           description: "Welcome back, " + username,
         });
         
-        // After successful login, navigate to the dashboard with settings panel
-        navigate("/dashboard");
+        // After successful login, navigate to the radar view as default
+        navigate("/radar");
       }, 1500);
     } else {
       // Simulate login for development/testing
@@ -50,8 +50,8 @@ const Auth = () => {
           description: "Host not connected. Simulating successful login.",
         });
         
-        // After successful login, navigate to the dashboard with settings panel
-        navigate("/dashboard");
+        // After successful login, navigate to the radar view as default
+        navigate("/radar");
       }, 1500);
     }
   };
@@ -68,8 +68,8 @@ const Auth = () => {
         description: "You've been logged in automatically",
       });
       
-      // Navigate to dashboard instead of radar
-      navigate("/dashboard");
+      // Navigate to radar by default
+      navigate("/radar");
     }, 1500);
   };
 

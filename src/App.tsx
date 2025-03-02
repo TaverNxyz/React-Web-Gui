@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import Auth from "./pages/Auth";
+import Radar from "./pages/Radar";
 import { InteropProvider } from "./contexts/InteropContext";
 import { SplashScreen } from "./components/splash/SplashScreen";
 import { useState, useEffect } from "react";
