@@ -27,9 +27,6 @@ namespace imperium.tech
             splashScreenManager.ShowSplashScreen();
         }
 
-        // The InitializeComponent method is already defined in the partial class
-        // in MainForm.Designer.cs, so we remove it from here
-
         private void InitializeWebView()
         {
             webViewManager.Initialize();
