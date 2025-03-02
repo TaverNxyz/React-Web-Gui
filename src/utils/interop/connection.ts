@@ -1,4 +1,3 @@
-
 /**
  * Connection handling for .NET integration
  * Coordinates connection detection, heartbeat monitoring and status management
@@ -92,10 +91,12 @@ export class ConnectionHandler {
     if (this.sendMessageCallback) {
       this.heartbeatMonitor.startHeartbeat(() => {
         if (this.sendMessageCallback) {
+          const lastTimestamp = this.heartbeatMonitor.getLastMessageTimestamp();
+          const currentTime = Date.now();
+          
           this.sendMessageCallback('HEARTBEAT', { 
-            timestamp: Date.now(),
-            // Fix: Using appropriate method call and number conversion
-            sessionDuration: Date.now() - this.heartbeatMonitor.getLastMessageTimestamp()
+            timestamp: currentTime,
+            sessionDuration: currentTime - lastTimestamp
           });
         }
       });
