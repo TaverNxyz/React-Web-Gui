@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,6 +8,7 @@ import { Lock, User, Shield, AlertCircle } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useInterop } from "@/contexts/InteropContext";
 import { useNavigate } from "react-router-dom";
+import { useToast } from "@/hooks/use-toast";
 
 const Auth = () => {
   const [username, setUsername] = useState("");
@@ -16,6 +17,30 @@ const Auth = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { isConnected, sendMessage } = useInterop();
   const navigate = useNavigate();
+  const { toast } = useToast();
+
+  // Set up listener for AUTH_RESPONSE message
+  useEffect(() => {
+    const handleAuthResponse = (event) => {
+      if (event.data && event.data.type === "AUTH_RESPONSE") {
+        setIsLoading(false);
+        const response = event.data.payload;
+        
+        if (response.success) {
+          toast({
+            title: "Authentication Successful",
+            description: `Welcome back, ${response.username}`,
+          });
+          navigate("/radar");
+        } else {
+          setError(response.errorMessage || "Authentication failed");
+        }
+      }
+    };
+
+    window.addEventListener("message", handleAuthResponse);
+    return () => window.removeEventListener("message", handleAuthResponse);
+  }, [navigate, toast]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,26 +56,21 @@ const Auth = () => {
     try {
       // Send login request to .NET host
       if (isConnected) {
-        // In real implementation, we would wait for a response from the host
-        // For now, we'll simulate a successful auth after 1 second
         sendMessage("AUTH_REQUEST", { 
           username, 
-          // NOTE: In production we should hash this password first
-          // Only sending for demo purposes
           password 
         });
         
-        setTimeout(() => {
-          setIsLoading(false);
-          // Simulate successful login
-          navigate("/radar");
-        }, 1000);
+        // Don't navigate here - wait for AUTH_RESPONSE message
       } else {
         // If not connected to .NET host, simulate local auth
-        // In production, this would be removed and we'd rely on the host
         setTimeout(() => {
           setIsLoading(false);
           if (username === "admin" && password === "password") {
+            toast({
+              title: "Authentication Successful",
+              description: "Welcome back, admin",
+            });
             navigate("/radar");
           } else {
             setError("Invalid credentials");
