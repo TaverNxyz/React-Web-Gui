@@ -10,7 +10,7 @@ import SecurityUtils from './securityUtils';
 
 export class AuthService {
   private authToken: string | null = null;
-  private refreshToken: string | null = null;
+  private refreshTokenValue: string | null = null;
   private tokenExpiry: number = 0;
   private refreshInterval: number | null = null;
   
@@ -48,7 +48,7 @@ export class AuthService {
       if (response.success) {
         // Store auth tokens
         this.authToken = response.token || null;
-        this.refreshToken = response.refreshToken || null;
+        this.refreshTokenValue = response.refreshToken || null;
         this.tokenExpiry = response.expiresAt || 0;
         
         // Setup token refresh
@@ -91,7 +91,7 @@ export class AuthService {
     // Only set up refresh if we have a token and expiry
     if (this.authToken && this.tokenExpiry) {
       this.refreshInterval = window.setInterval(() => {
-        this.refreshToken();
+        this.refreshAuthToken();
       }, CONNECTION_CONFIG.SECURITY.TOKEN_REFRESH_INTERVAL);
     }
   }
@@ -99,18 +99,18 @@ export class AuthService {
   /**
    * Refresh the auth token
    */
-  private async refreshToken(): Promise<void> {
+  private async refreshAuthToken(): Promise<void> {
     try {
-      if (!this.refreshToken) return;
+      if (!this.refreshTokenValue) return;
       
       const response = await messagingService.sendMessageAndWaitForResponse(
         'AUTH_REFRESH',
-        { refreshToken: this.refreshToken }
+        { refreshToken: this.refreshTokenValue }
       ) as AuthResponse;
       
       if (response.success) {
         this.authToken = response.token || null;
-        this.refreshToken = response.refreshToken || this.refreshToken;
+        this.refreshTokenValue = response.refreshToken || this.refreshTokenValue;
         this.tokenExpiry = response.expiresAt || 0;
       } else {
         // Token refresh failed, clear auth state
@@ -126,7 +126,7 @@ export class AuthService {
    */
   public logout(): void {
     this.authToken = null;
-    this.refreshToken = null;
+    this.refreshTokenValue = null;
     this.tokenExpiry = 0;
     
     if (this.refreshInterval !== null) {
