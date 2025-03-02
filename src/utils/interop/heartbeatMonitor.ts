@@ -23,6 +23,10 @@ export class HeartbeatMonitor {
     this.lastMessageTimestamp = Date.now();
   }
 
+  public getLastMessageTimestamp(): number {
+    return this.lastMessageTimestamp;
+  }
+
   public startHeartbeat(sendHeartbeatCallback: () => void): void {
     // Clear any existing heartbeat
     if (this.heartbeatInterval !== null) {

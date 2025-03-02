@@ -10,7 +10,7 @@ import SecurityUtils from './securityUtils';
 
 export class AuthService {
   private authToken: string | null = null;
-  private refreshTokenValue: string | null = null;
+  private refreshTokenValue: string | null = null; // Renamed from refreshToken to avoid duplicate
   private tokenExpiry: number = 0;
   private refreshInterval: number | null = null;
   
@@ -91,7 +91,7 @@ export class AuthService {
     // Only set up refresh if we have a token and expiry
     if (this.authToken && this.tokenExpiry) {
       this.refreshInterval = window.setInterval(() => {
-        this.refreshAuthToken();
+        this.refreshAuthToken(); // Fixed: Using the method name, not calling it as a property
       }, CONNECTION_CONFIG.SECURITY.TOKEN_REFRESH_INTERVAL);
     }
   }

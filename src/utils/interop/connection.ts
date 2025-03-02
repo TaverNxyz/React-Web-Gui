@@ -94,7 +94,8 @@ export class ConnectionHandler {
         if (this.sendMessageCallback) {
           this.sendMessageCallback('HEARTBEAT', { 
             timestamp: Date.now(),
-            sessionDuration: Date.now() - this.heartbeatMonitor.updateLastMessageTimestamp()
+            // Fix: Using appropriate method call and number conversion
+            sessionDuration: Date.now() - this.heartbeatMonitor.getLastMessageTimestamp()
           });
         }
       });
