@@ -33,7 +33,15 @@ If your namespace is not "imperium.tech", modify these resource paths in MainFor
 - `imperium.tech.Resources.splash.png`
 - `imperium.tech.WebResources.index.html`
 
-## Step 6: Build and Run
+## Step 6: Create Windows Forms Project
+
+1. Create a new Windows Forms project
+2. Add MainForm.cs to your project
+3. Update Program.cs to use MainForm instead of Form1
+4. If you get duplicate InitializeComponent error, remove the manual implementation and let the designer generate it
+5. Make sure System.Text.Json is properly referenced for JSON handling
+
+## Step 7: Build and Run
 
 Build and run your application. The MainForm will:
 1. Show the splash screen
@@ -51,3 +59,7 @@ Build and run your application. The MainForm will:
 2. If WebView2 fails to initialize:
    - Ensure WebView2 Runtime is installed
    - Check error messages in console output
+
+3. For JSON parsing errors:
+   - Make sure System.Text.Json is properly referenced
+   - Check that message format matches expected structure
