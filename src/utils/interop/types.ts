@@ -1,6 +1,6 @@
 
 /**
- * Type definitions for the interop service
+ * Enhanced type definitions for the WebView2 interop service
  */
 
 // Define message types for type safety
@@ -12,9 +12,15 @@ export type InteropMessageType =
   | 'CONNECT'
   | 'DISCONNECT'
   | 'HEARTBEAT'
-  | 'ENTITY_UPDATE';
+  | 'ENTITY_UPDATE'
+  | 'AUTH_REQUEST'
+  | 'AUTH_RESPONSE'
+  | 'AUTH_CHALLENGE'
+  | 'AUTH_CHALLENGE_RESPONSE'
+  | 'AUTH_REFRESH'
+  | 'LOG_EVENT';
 
-// Message interface
+// Enhanced message interface with authentication support
 export interface InteropMessage {
   type: InteropMessageType;
   payload: any;
@@ -22,11 +28,45 @@ export interface InteropMessage {
   sessionId?: string;
   correlationId?: string;
   signature?: string;
+  authToken?: string;
   error?: string;
+  securityLevel?: number;
+  version?: string;
+}
+
+// Authentication request interface
+export interface AuthRequest {
+  username: string;
+  password: string;
+  challenge?: string;
+  deviceInfo?: DeviceInfo;
+}
+
+// Authentication response interface
+export interface AuthResponse {
+  success: boolean;
+  token?: string;
+  refreshToken?: string;
+  expiresAt?: number;
+  userId?: string;
+  username?: string;
+  errorMessage?: string;
+  errorCode?: string;
+  authLevel?: number;
+}
+
+// Device information for authentication
+export interface DeviceInfo {
+  platform: string;
+  userAgent: string;
+  screenSize: string;
+  language: string;
+  timeZone: string;
+  deviceId: string;
 }
 
 // Settings categories
-export type SettingsCategory = 'memory' | 'aimbot' | 'esp' | 'ui' | 'misc';
+export type SettingsCategory = 'memory' | 'aimbot' | 'esp' | 'ui' | 'misc' | 'auth';
 
 // Define radar entity interface for type safety
 export interface RadarEntity {
@@ -70,4 +110,31 @@ export interface WindowWithHostObjects {
       postMessage: (message: string) => void;
     }
   };
+  secureHost?: {
+    authenticate: (username: string, password: string) => string;
+    receiveMessage: (message: string) => void;
+    getChallengeToken: () => string;
+  };
+}
+
+// User data interface
+export interface UserData {
+  id: string;
+  username: string;
+  displayName?: string;
+  email?: string;
+  role: 'admin' | 'user' | 'guest';
+  permissions: string[];
+  lastLogin?: number;
+  isActive: boolean;
+}
+
+// Log event interface for activity logging
+export interface LogEvent {
+  eventType: 'info' | 'warning' | 'error' | 'auth' | 'system';
+  message: string;
+  details?: any;
+  userId?: string;
+  timestamp: number;
+  source: 'ui' | 'host' | 'system';
 }

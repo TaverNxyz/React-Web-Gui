@@ -1,6 +1,6 @@
 
 /**
- * Configuration settings for .NET integration
+ * Enhanced configuration settings for .NET WebView2 integration
  */
 
 export const CONNECTION_CONFIG = {
@@ -16,18 +16,30 @@ export const CONNECTION_CONFIG = {
   // Timeout for waiting for response (ms)
   RESPONSE_TIMEOUT: 3000,
   
-  // Security settings
+  // Security settings - Enhanced for WebView2 integration
   SECURITY: {
-    // Whether to encrypt payloads
-    ENCRYPT_PAYLOADS: false,
+    // Whether to encrypt payloads - Enable for production
+    ENCRYPT_PAYLOADS: true,
     
     // Whether to enable message authentication
-    ENABLE_MESSAGE_AUTH: false,
+    ENABLE_MESSAGE_AUTH: true,
+    
+    // Whether to use challenge-response for authentication
+    ENABLE_CHALLENGE_RESPONSE: true,
+    
+    // Auth scheme to use - "none", "basic", or "challenge"
+    AUTH_SCHEME: "challenge",
+    
+    // Token refresh interval (ms)
+    TOKEN_REFRESH_INTERVAL: 60000 * 15, // 15 minutes
   },
   
   // Communication channels available
   CHANNELS: {
+    // WebView2 is the preferred channel for .NET integration
     WEBVIEW2: true,
+    
+    // Fallback channels
     PARENT_WINDOW: true,
     EXTERNAL_NOTIFY: true,
     CUSTOM_OBJECTS: true,
@@ -42,7 +54,7 @@ export const CONNECTION_CONFIG = {
   }
 };
 
-// Network security recommendations
+// Enhanced network security recommendations
 export const NETWORK_SECURITY_TIPS = [
   "Use TLS/HTTPS for all external API communication",
   "Implement certificate pinning for external APIs",
@@ -51,5 +63,30 @@ export const NETWORK_SECURITY_TIPS = [
   "Use encrypted local communication between UI and backend",
   "Implement application-level message signing",
   "Randomize connection timings to avoid patterns",
-  "Consider obfuscating connection metadata"
+  "Consider obfuscating connection metadata",
+  "Use challenge-response for WebView2 authentication",
+  "Implement token-based authentication with short-lived tokens",
+  "Add rate limiting on authentication attempts",
+  "Monitor and log unusual connection patterns",
 ];
+
+// Authentication related configurations
+export const AUTH_CONFIG = {
+  // Maximum failed login attempts before temporary lockout
+  MAX_LOGIN_ATTEMPTS: 5,
+  
+  // Lockout duration after exceeding max attempts (minutes)
+  LOCKOUT_DURATION: 15,
+  
+  // Token expiration time (minutes)
+  TOKEN_EXPIRATION: 60,
+  
+  // Allow biometric authentication if available
+  ALLOW_BIOMETRIC: true,
+  
+  // When true, send authentication state in every message
+  PERSISTENT_AUTH: true,
+  
+  // Required authentication level (0-3, where 3 is highest)
+  AUTH_LEVEL: 2,
+};
