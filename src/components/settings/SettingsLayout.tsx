@@ -1,10 +1,7 @@
 
 import React from "react";
-import { Link } from "react-router-dom";
-import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Monitor, Crosshair, Eye, Settings, Radar } from "lucide-react";
-import ConnectionStatus from "./ConnectionStatus";
+import { Monitor, Crosshair, Eye, Settings } from "lucide-react";
 
 interface SettingsLayoutProps {
   sauceDispenserContent: React.ReactNode;
@@ -22,37 +19,31 @@ const SettingsLayout: React.FC<SettingsLayoutProps> = ({
   return (
     <div className="container mx-auto p-4 max-w-4xl">
       <div className="flex justify-between items-center mb-6">
-        <div className="flex items-center gap-4">
-          <h1 className="text-2xl font-bold text-cyan-400">Settings Panel</h1>
-          <ConnectionStatus />
-        </div>
-        <Link to="/radar">
-          <Button className="bg-cyan-600 hover:bg-cyan-500">
-            <Radar className="mr-2 h-4 w-4" /> Go to Radar
-          </Button>
-        </Link>
+        <h1 className="text-2xl font-bold text-cyan-400">Settings Panel</h1>
       </div>
 
       <Tabs defaultValue="memory" className="w-full">
-        <TabsList className="grid grid-cols-4 mb-8">
-          <TabsTrigger value="memory">
+        <TabsList className="grid grid-cols-4 mb-4">
+          <TabsTrigger value="memory" className="flex items-center">
             <Monitor className="mr-2 h-4 w-4" /> Sauce Dispenser
           </TabsTrigger>
-          <TabsTrigger value="aimbot">
+          <TabsTrigger value="aimbot" className="flex items-center">
             <Crosshair className="mr-2 h-4 w-4" /> Aimbot
           </TabsTrigger>
-          <TabsTrigger value="esp">
+          <TabsTrigger value="esp" className="flex items-center">
             <Eye className="mr-2 h-4 w-4" /> ESP
           </TabsTrigger>
-          <TabsTrigger value="ui">
+          <TabsTrigger value="ui" className="flex items-center">
             <Settings className="mr-2 h-4 w-4" /> UI
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="memory">{sauceDispenserContent}</TabsContent>
-        <TabsContent value="aimbot">{aimbotContent}</TabsContent>
-        <TabsContent value="esp">{espContent}</TabsContent>
-        <TabsContent value="ui">{uiContent}</TabsContent>
+        <div className="bg-slate-900 rounded-md p-6 shadow-lg">
+          <TabsContent value="memory">{sauceDispenserContent}</TabsContent>
+          <TabsContent value="aimbot">{aimbotContent}</TabsContent>
+          <TabsContent value="esp">{espContent}</TabsContent>
+          <TabsContent value="ui">{uiContent}</TabsContent>
+        </div>
       </Tabs>
     </div>
   );
