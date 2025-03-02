@@ -9,6 +9,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useInterop } from "@/contexts/InteropContext";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
+import InteropService from "@/utils/interopService";
 
 const Auth = () => {
   const [username, setUsername] = useState("");
@@ -38,9 +39,56 @@ const Auth = () => {
       }
     };
 
+    // Add the event listener for window messages
     window.addEventListener("message", handleAuthResponse);
-    return () => window.removeEventListener("message", handleAuthResponse);
+
+    // Set up interop service handler for auth responses
+    const authResponseHandler = (message) => {
+      setIsLoading(false);
+      const response = message.payload;
+      
+      if (response.success) {
+        toast({
+          title: "Authentication Successful",
+          description: `Welcome back, ${response.username || 'user'}`,
+        });
+        navigate("/radar");
+      } else {
+        setError(response.errorMessage || "Authentication failed");
+      }
+    };
+
+    // Register the handler with our interop service
+    InteropService.on("AUTH_RESPONSE", authResponseHandler);
+    
+    return () => {
+      window.removeEventListener("message", handleAuthResponse);
+      InteropService.off("AUTH_RESPONSE", authResponseHandler);
+    };
   }, [navigate, toast]);
+
+  const simulateSuccessfulLogin = () => {
+    setIsLoading(true);
+    setError("");
+    
+    // Simulate a delay for authentication
+    setTimeout(() => {
+      // Simulate the response we'd get from the .NET host
+      const simulatedResponse = {
+        type: "AUTH_RESPONSE",
+        payload: {
+          success: true,
+          token: "simulated-jwt-token-12345",
+          expiresAt: Date.now() + 3600000, // 1 hour from now
+          username: username || "admin"
+        },
+        timestamp: Date.now()
+      };
+      
+      // Process the simulated response
+      InteropService.simulateIncomingMessage("AUTH_RESPONSE", simulatedResponse.payload);
+    }, 1500);
+  };
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -54,28 +102,17 @@ const Auth = () => {
     setError("");
     
     try {
-      // Send login request to .NET host
       if (isConnected) {
-        sendMessage("AUTH_REQUEST", { 
+        // Send login request to .NET host
+        InteropService.sendMessage("AUTH_REQUEST", { 
           username, 
           password 
         });
         
-        // Don't navigate here - wait for AUTH_RESPONSE message
+        // Response will be handled by the effect's handler
       } else {
-        // If not connected to .NET host, simulate local auth
-        setTimeout(() => {
-          setIsLoading(false);
-          if (username === "admin" && password === "password") {
-            toast({
-              title: "Authentication Successful",
-              description: "Welcome back, admin",
-            });
-            navigate("/radar");
-          } else {
-            setError("Invalid credentials");
-          }
-        }, 1000);
+        // For testing: simulate a successful login when not connected to host
+        simulateSuccessfulLogin();
       }
     } catch (err) {
       setIsLoading(false);
@@ -141,28 +178,41 @@ const Auth = () => {
                   />
                 </div>
               </div>
+
+              <div className="flex justify-center mt-2">
+                <Button 
+                  className="w-full bg-cyan-600 hover:bg-cyan-700 text-white" 
+                  onClick={handleLogin}
+                  disabled={isLoading}
+                  type="button"
+                >
+                  {isLoading ? (
+                    <span className="flex items-center justify-center gap-2">
+                      <span className="h-4 w-4 animate-spin rounded-full border-2 border-slate-200 border-t-transparent"></span>
+                      Authenticating...
+                    </span>
+                  ) : (
+                    <span className="flex items-center justify-center gap-2">
+                      <Shield className="h-4 w-4" />
+                      Login
+                    </span>
+                  )}
+                </Button>
+              </div>
+              
+              <div className="mt-2">
+                <Button 
+                  variant="outline" 
+                  className="w-full border-slate-700 bg-slate-900/30 text-slate-300 hover:bg-slate-900/50"
+                  onClick={simulateSuccessfulLogin}
+                  type="button"
+                >
+                  Simulate Successful Login
+                </Button>
+              </div>
             </div>
           </form>
         </CardContent>
-        <CardFooter>
-          <Button 
-            className="w-full bg-cyan-600 hover:bg-cyan-700 text-white" 
-            onClick={handleLogin}
-            disabled={isLoading}
-          >
-            {isLoading ? (
-              <span className="flex items-center gap-2">
-                <span className="h-4 w-4 animate-spin rounded-full border-2 border-slate-200 border-t-transparent"></span>
-                Authenticating...
-              </span>
-            ) : (
-              <span className="flex items-center gap-2">
-                <Shield className="h-4 w-4" />
-                Login
-              </span>
-            )}
-          </Button>
-        </CardFooter>
       </Card>
     </div>
   );

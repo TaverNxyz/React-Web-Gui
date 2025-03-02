@@ -9,13 +9,17 @@ import type {
   InteropMessage, 
   InteropMessageType, 
   SettingsCategory, 
-  RadarEntity 
+  RadarEntity,
+  AuthRequest,
+  AuthResponse
 } from './interop/types';
 
 export type { 
   InteropMessage, 
   InteropMessageType, 
   SettingsCategory, 
-  RadarEntity 
+  RadarEntity,
+  AuthRequest,
+  AuthResponse
 };
 export default InteropService;
