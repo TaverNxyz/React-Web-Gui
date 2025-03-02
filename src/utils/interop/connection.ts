@@ -1,9 +1,10 @@
+
 /**
  * Connection handling for .NET integration
  * Coordinates connection detection, heartbeat monitoring and status management
  */
 
-import type { InteropMessage, WindowWithHostObjects } from './types';
+import type { InteropMessage, InteropMessageType, WindowWithHostObjects } from './types';
 import { CONNECTION_CONFIG } from './config';
 import HeartbeatMonitor from './heartbeatMonitor';
 import ConnectionDetector from './connectionDetector';
@@ -11,7 +12,7 @@ import ConnectionDetector from './connectionDetector';
 export class ConnectionHandler {
   private isConnected: boolean = false;
   private onConnectionChangeCallback: ((connected: boolean) => void) | null = null;
-  private sendMessageCallback: ((type: string, payload: any) => void) | null = null;
+  private sendMessageCallback: ((type: InteropMessageType, payload: Record<string, unknown>) => void) | null = null;
   private heartbeatMonitor: HeartbeatMonitor;
   private connectionDetector: ConnectionDetector;
 
@@ -31,7 +32,7 @@ export class ConnectionHandler {
 
   public setCallbacks(
     onConnectionChange: (connected: boolean) => void,
-    sendMessage: (type: string, payload: any) => void
+    sendMessage: (type: InteropMessageType, payload: Record<string, unknown>) => void
   ) {
     this.onConnectionChangeCallback = onConnectionChange;
     this.sendMessageCallback = sendMessage;
