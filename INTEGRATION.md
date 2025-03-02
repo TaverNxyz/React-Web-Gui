@@ -1,4 +1,3 @@
-
 # WebView2 Integration Guide
 
 This guide explains how to integrate the React UI with your .NET Windows application using WebView2.
@@ -11,7 +10,7 @@ This guide explains how to integrate the React UI with your .NET Windows applica
    ```
    This will create a `dist` folder with all the static files (HTML, CSS, JS).
 
-## Step 2: Set Up WebView2 in Your .NET Application
+## Step 2: Set Up WebView2 in Your .NET Application with Custom Splash Screen
 
 1. Install the WebView2 NuGet package in your Windows Forms or WPF project:
    ```
@@ -32,6 +31,11 @@ This guide explains how to integrate the React UI with your .NET Windows applica
    - Properties
    - Set "Build Action" to "Embedded Resource"
 
+4. For the custom splash screen image:
+   - Add the splash screen image to your .NET project resources
+   - Set its "Build Action" to "Embedded Resource"
+   - Use this image in your MainForm before initializing WebView2
+
 ## Step 3: Load the React App in WebView2
 
 Create a new Windows Forms application in Visual Studio with this complete MainForm.cs example:
@@ -41,6 +45,7 @@ using System;
 using System.IO;
 using System.Text;
 using System.Windows.Forms;
+using System.Drawing;
 using System.Reflection;
 using System.Text.Json;
 using Microsoft.Web.WebView2.Core;
@@ -52,6 +57,8 @@ namespace TarkovSecureApp
     {
         private WebView2 webView;
         private string sessionId;
+        private PictureBox splashBox;
+        private Timer splashTimer;
 
         public MainForm()
         {
@@ -62,8 +69,47 @@ namespace TarkovSecureApp
             this.Size = new System.Drawing.Size(1280, 720);
             this.StartPosition = FormStartPosition.CenterScreen;
             
-            // Initialize WebView async
-            this.Load += MainForm_Load;
+            // Show splash screen first
+            ShowSplashScreen();
+            
+            // Initialize WebView after splash (with timer)
+            splashTimer = new Timer();
+            splashTimer.Interval = 2500; // 2.5 seconds
+            splashTimer.Tick += (s, e) => {
+                splashTimer.Stop();
+                splashBox.Visible = false;
+                this.Controls.Remove(splashBox);
+                splashBox.Dispose();
+                InitializeWebView();
+            };
+            splashTimer.Start();
+        }
+
+        private void ShowSplashScreen()
+        {
+            try {
+                // Load splash image from embedded resources
+                // Replace "TarkovSecureApp.Resources.splash.png" with your actual resource path
+                using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("TarkovSecureApp.Resources.splash.png"))
+                {
+                    if (stream != null)
+                    {
+                        var splashImage = Image.FromStream(stream);
+                        splashBox = new PictureBox();
+                        splashBox.Dock = DockStyle.Fill;
+                        splashBox.SizeMode = PictureBoxSizeMode.Zoom;
+                        splashBox.Image = splashImage;
+                        this.Controls.Add(splashBox);
+                        splashBox.BringToFront();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error loading splash: {ex.Message}");
+                // If splash fails, init WebView immediately
+                InitializeWebView();
+            }
         }
 
         private void InitializeComponent()
@@ -77,7 +123,7 @@ namespace TarkovSecureApp
             this.ResumeLayout(false);
         }
 
-        private async void MainForm_Load(object sender, EventArgs e)
+        private async void InitializeWebView()
         {
             try
             {
@@ -309,3 +355,26 @@ Test the integration by:
 4. Checking that all UI components render correctly in WebView2
 
 Use the existing `InteropContext` and related utility files in your React project to handle the communication with the WebView2 host.
+
+## Step 8: Custom Splash Screen
+
+1. Add the splash screen image to your .NET project resources
+2. Set its "Build Action" to "Embedded Resource"
+3. Use this image in your MainForm before initializing WebView2
+
+## Step 9: Additional Customizations
+
+- Customize the splash screen image and its properties
+- Add more complex splash screen logic if needed
+- Implement additional features or improvements to the WebView2 integration
+
+## Step 10: Documentation and Support
+
+- Provide documentation on how to set up and use the WebView2 integration
+- Offer support for any issues or questions that arise during implementation
+
+## Step 11: Continuous Improvement
+
+- Regularly update the WebView2 integration guide and code
+- Gather feedback from users and make necessary improvements
+- Stay informed about WebView2 updates and security patches
