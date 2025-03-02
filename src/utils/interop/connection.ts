@@ -47,7 +47,7 @@ export class ConnectionHandler {
       
       // Listen for messages from the .NET host via WebView2
       if (customWindow.chrome && customWindow.chrome.webview) {
-        customWindow.chrome.webview.addEventListener('message', (event: any) => {
+        customWindow.chrome.webview.addEventListener('message', (event: MessageEvent) => {
           try {
             const message = typeof event.data === 'string' ? JSON.parse(event.data) : event.data;
             
@@ -97,7 +97,7 @@ export class ConnectionHandler {
           
           this.sendMessageCallback('HEARTBEAT', { 
             timestamp: currentTime,
-            sessionDuration: currentTime - lastTimestamp
+            sessionDuration: Number(currentTime) - Number(lastTimestamp)
           });
         }
       });

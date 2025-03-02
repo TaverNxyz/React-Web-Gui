@@ -1,3 +1,4 @@
+
 using System;
 using System.Windows.Forms;
 using System.Drawing;
@@ -26,8 +27,8 @@ namespace imperium.tech
             splashScreenManager.ShowSplashScreen();
         }
 
-        // Note: DO NOT implement InitializeComponent here
-        // It will be auto-generated in MainForm.Designer.cs
+        // Remove the InitializeComponent method declaration from here
+        // It is already defined in the partial class in MainForm.Designer.cs
 
         private void InitializeWebView()
         {
