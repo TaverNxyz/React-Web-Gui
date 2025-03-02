@@ -1,23 +1,30 @@
 
-import React from 'react';
-import RadarDisplay from '@/components/radar/RadarDisplay';
-import ControlPanel from '@/components/radar/ControlPanel';
-import StatusBar from '@/components/radar/StatusBar';
-import Navigation from '@/components/layout/Navigation';
+import React from "react";
+import { useInterop } from "@/contexts/InteropContext";
+import { RadarDisplay } from "@/components/radar/RadarDisplay";
+import { ControlPanel } from "@/components/radar/ControlPanel";
+import { StatusBar } from "@/components/radar/StatusBar";
+import Navigation from "@/components/layout/Navigation";
 
-const Radar: React.FC = () => {
+const Radar = () => {
+  const { isConnected } = useInterop();
+
   return (
-    <div className="h-screen flex flex-col bg-slate-900 text-slate-200">
+    <div className="min-h-screen bg-slate-950 text-white">
       <Navigation />
-      <div className="flex-1 flex">
-        <div className="w-3/4 p-4">
-          <RadarDisplay />
+      <div className="container mx-auto p-4">
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+          <div className="lg:col-span-4">
+            <RadarDisplay />
+          </div>
+          <div className="lg:col-span-1">
+            <ControlPanel />
+          </div>
         </div>
-        <div className="w-1/4 bg-slate-800 p-4 border-l border-slate-700">
-          <ControlPanel />
+        <div className="mt-6">
+          <StatusBar connected={isConnected} />
         </div>
       </div>
-      <StatusBar />
     </div>
   );
 };
