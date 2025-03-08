@@ -70,7 +70,7 @@ const App = () => {
                 path="/radar" 
                 element={
                   <ProtectedRoute>
-                    <Navigate to="/dashboard" replace />
+                    <Radar />
                   </ProtectedRoute>
                 } 
               />
